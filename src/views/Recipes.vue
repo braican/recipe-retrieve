@@ -4,14 +4,16 @@
       Logout
     </button>
 
+    {{ currentUser.name }}
+
     <article v-for="(recipe, i) in recipes" :key="i" class="recipes">
       <p>{{ recipe.name }}</p>
     </article>
 
-    <form @submit="addRecipe">
+    <form @submit.prevent="addRecipe">
       <h2>Add new recipe</h2>
       <input v-model="name" type="text" placeholder="Name" required>
-      <input v-model="link" type="text" placeholder="Link" required>
+      <input v-model="link" type="text" placeholder="Link">
       <button type="submit">
         Add
       </button>
@@ -20,7 +22,8 @@
 </template>
 
 <script>
-import { db, auth } from '@/firebase';
+import { auth, recipesCollection } from '@/firebase';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Recipes',
@@ -33,16 +36,25 @@ export default {
   },
   firestore() {
     return {
-      recipes: db.collection('recipes').orderBy('createdAt'),
+      recipes: recipesCollection.where('uid', '==', this.currentUser.uid),
     };
   },
+  computed: {
+    ...mapState(['currentUser']),
+  },
   methods: {
-    addRecipe(name, link) {
+    addRecipe() {
       const createdAt = new Date();
-      // db.collection('recipes').add({ name, link, createdAt });
 
-      // this.name = '';
-      // this.link = '';
+      recipesCollection.add({
+        name: this.name,
+        link: this.link,
+        uid: this.currentUser.uid,
+        createdAt,
+      });
+
+      this.name = '';
+      this.link = '';
     },
     logout() {
       auth.signOut().then(() => {

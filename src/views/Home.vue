@@ -14,9 +14,7 @@ export default {
   name: 'Login',
   methods: {
     login() {
-      auth.signInWithPopup(authProvider).then(user => {
-        console.log(user);
-
+      auth.signInWithPopup(authProvider).then(() => {
         this.$router.replace('/recipes');
       }).catch(err => {
         console.error(err);
