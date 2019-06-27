@@ -1,0 +1,8 @@
+html {
+  font-family: sans-serif;
+}
+
+h1 {
+  @include termina-heavy();
+  @include fluid-font(22px $bp--phone, 60px $bp--desktop);
+}

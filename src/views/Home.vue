@@ -4,14 +4,18 @@
     <button class="btn" @click="login">
       Sign in with Google
     </button>
+
+    <CookbookIcon />
   </div>
 </template>
 
 <script>
 import { auth, authProvider } from '@/firebase';
+import CookbookIcon from '@/svg/cookbook';
 
 export default {
   name: 'Login',
+  components: { CookbookIcon },
   methods: {
     login() {
       auth.signInWithPopup(authProvider).then(() => {
@@ -23,4 +27,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import '../styles/abstracts/abstracts';
+
+
+
+</style>
+
 

@@ -1,14 +1,8 @@
 <template>
   <div>
-    <button class="btn" @click="logout">
-      Logout
-    </button>
+    <AppHeader />
 
-    {{ currentUser.name }}
-
-    <article v-for="(recipe, i) in recipes" :key="i" class="recipes">
-      <p>{{ recipe.name }}</p>
-    </article>
+    <Recipe v-for="(recipe, i) in recipes" :key="i" :name="recipe.name" :link="recipe.link" />
 
     <form @submit.prevent="addRecipe">
       <h2>Add new recipe</h2>
@@ -22,11 +16,14 @@
 </template>
 
 <script>
-import { auth, recipesCollection } from '@/firebase';
+import { recipesCollection } from '@/firebase';
 import { mapState } from 'vuex';
+import AppHeader from '@/components/AppHeader';
+import Recipe from '@/components/Recipe';
 
 export default {
   name: 'Recipes',
+  components: { AppHeader, Recipe },
   data() {
     return {
       recipes: [],
@@ -34,13 +31,13 @@ export default {
       link: '',
     };
   },
+  computed: {
+    ...mapState(['currentUser']),
+  },
   firestore() {
     return {
       recipes: recipesCollection.where('uid', '==', this.currentUser.uid),
     };
-  },
-  computed: {
-    ...mapState(['currentUser']),
   },
   methods: {
     addRecipe() {
@@ -55,11 +52,6 @@ export default {
 
       this.name = '';
       this.link = '';
-    },
-    logout() {
-      auth.signOut().then(() => {
-        this.$router.replace('login');
-      });
     },
   },
 };
