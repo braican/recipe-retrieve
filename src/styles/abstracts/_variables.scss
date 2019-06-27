@@ -1,8 +1,11 @@
 // Colors
 // -----------
 
+$c--white: #ffffff;
 $c--teal: #4abba4;
 $c--yellow: #feda6f;
+$c--yellow-darker: darken($c--yellow, 12%);
+$c--yellow-dark: darken($c--yellow, 26%);
 
 // Breakpoints
 // -----------
