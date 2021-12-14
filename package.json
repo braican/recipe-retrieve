@@ -3,11 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "bootstrap-db": "node ./scripts/bootstrap-db.js",
-    "serve": "npm run bootstrap-db && vue-cli-service serve",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build:local": "vue-cli-service build",
-    "prebuild": "echo 'Check FaunaDB schemas' && npm run bootstrap-db",
     "lint": "vue-cli-service lint --no-fix ",
     "lint:--fix": "vue-cli-service lint --no-fix ",
     "deploy:preview": "npm run build:local && netlify deploy",
