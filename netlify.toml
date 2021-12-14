@@ -1,0 +1,11 @@
+
+[build]
+  command = "npm run build"
+  functions = "functions"
+  publish = "dist"
+
+[dev]
+  command = "vue-cli-service serve"
+  functions = "functions"
+  publish = "dist"
+  targetPort = 3000
