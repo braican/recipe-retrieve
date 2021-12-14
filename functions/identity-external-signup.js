@@ -1,12 +1,12 @@
 /*
 This is a Netlify serverless function which leverages code from identity-signup.js
 As external signups are not triggered automatically by Netlify, some additional code is required. The main difference is
-that we need to make sure the function handler has an identity context. This is provided by the client calling this
+that we need to make sure the function handler has an identity context. This is provided by the client calling this 
 function imperatively. Without this, the function is unable to update the user app_metadata via the Netlify admin API.
 */
 
 "use strict";
-// eslint-disable-next-line
+// eslint-disable-next-line import/no-extraneous-dependencies
 const fetch = require("node-fetch");
 const identitySignup = require("./identity-signup");
 
@@ -21,11 +21,11 @@ function updateNetlifyUserAppMetaData(appMetaData, usersAdminUrl, JWT) {
   return fetch(usersAdminUrl, {
     method: "PUT",
     headers: { Authorization: `Bearer ${JWT}` },
-    body: JSON.stringify({ app_metadata: appMetaData }),
+    body: JSON.stringify({ app_metadata: appMetaData })
   })
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((e) => {
+    .then(response => response.json())
+    .then(data => data)
+    .catch(e => {
       console.error("error authorising user", e);
     });
 }
@@ -37,7 +37,7 @@ function handler(event, context, callback) {
   if (!user) {
     return callback(null, {
       statusCode: 401,
-      body: "You shouldn't be here",
+      body: "You shouldn't be here"
     });
   }
 
@@ -46,7 +46,7 @@ function handler(event, context, callback) {
   const usersAdminUrl = `${identity.url}/admin/users/${userID}`;
   const userObject = {
     id: userID,
-    user_metadata: user.user_metadata,
+    user_metadata: user.user_metadata
   };
   const password = identitySignup.generatePassword();
   console.log("admin url check", usersAdminUrl);
@@ -54,23 +54,23 @@ function handler(event, context, callback) {
 
   identitySignup
     .createDbUser(userObject, password)
-    .then((user) => identitySignup.obtainToken(user, password))
-    .then((key) =>
+    .then(user => identitySignup.obtainToken(user, password))
+    .then(key =>
       updateNetlifyUserAppMetaData({ db_token: key.secret }, usersAdminUrl, JWT)
     )
-    .then((resp) => {
+    .then(resp => {
       console.log("Received response: ", !!resp);
       console.log("Updated the user", resp.id);
       callback(null, {
         statusCode: 200,
-        body: JSON.stringify(resp),
+        body: JSON.stringify(resp)
       });
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Unable to create a user account", error);
       callback(null, {
         statusCode: 418,
-        body: JSON.stringify({ error: error }),
+        body: JSON.stringify({ error: error })
       });
     });
 }

@@ -5,13 +5,13 @@ export default {
   state() {
     return {
       isDevEnvironment: false,
-      siteURL: null,
+      siteURL: null
     };
   },
 
   getters: {
     isDevEnvironment: state => state.isDevEnvironment,
-    siteURL: state => state.siteURL,
+    siteURL: state => state.siteURL
   },
 
   mutations: {
@@ -20,6 +20,6 @@ export default {
     },
     SET_SITE_URL(state, value) {
       state.siteURL = value;
-    },
-  },
+    }
+  }
 };
