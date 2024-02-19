@@ -1,8 +1,16 @@
 {
   "name": "@braican/recipe-retrieve",
   "version": "0.1.0",
+  "description": "A modern recipe book.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:braican/recipe-retrieve.git"
+  },
+  "author": "Nick Braica <nick.braica@gmail.com>",
   "scripts": {},
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "dotenv": "^16.4.4"
+  }
 }
