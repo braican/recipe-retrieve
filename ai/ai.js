@@ -1,15 +1,14 @@
-require("dotenv").config();
-
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import 'dotenv/config';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Access your API key as an environment variable (see "Set up your API key" above)
 const genAI = new GoogleGenerativeAI(process.env.GEMINIAI_KEY);
 
 async function runGemini() {
-  // For text-only input, use the gemini-pro model
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+	// For text-only input, use the gemini-pro model
+	const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-  const prompt = `
+	const prompt = `
   You are a helpful tool that can parse recipes from text and identify the ingredients present in the recipe. When presented with a recipe, you should return JSON contianing an array of ingredients and their amounts. Each object representing an ingredient should have two properties: the full text of the ingredient as it appears in the recipe and the name of the ingredient. Both of these properties should be strings. The name of the ingredient should not include any descriptive adjectives (i.e. omitting "small" from "1 small potato"). Exclude any ingredients that are not food items (i.e. "parchment paper" or "rimmed baking sheet"). Exclude salt and peppper.
 
   Here's an example:
@@ -88,10 +87,10 @@ async function runGemini() {
   In the same skillet, add in the ginger and garlic. Cook until fragrant, about 30 seconds. Pour in the soy sauce, water, and dark brown sugar, and stir until well combined and the sugar has evaporated. Cook until the sauce slightly thickens, about 3 minutes, add in the crushed red pepper flakes, and then add back in the beef. Bring the mixture to a boil, stir, and add in the green onions. Cook for an additional minute and then serve over rice or rice noodles.
 `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text();
-  console.log(text);
+	const result = await model.generateContent(prompt);
+	const response = await result.response;
+	const text = response.text();
+	console.log(text);
 }
 
 runGemini();
