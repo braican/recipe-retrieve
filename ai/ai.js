@@ -5,8 +5,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.GEMINIAI_KEY);
 
 async function runGemini() {
+
 	// For text-only input, use the gemini-pro model
-	const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+	const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 	const prompt = `
   You are a helpful tool that can parse recipes from text and identify the ingredients present in the recipe. When presented with a recipe, you should return JSON contianing an array of ingredients and their amounts. Each object representing an ingredient should have two properties: the full text of the ingredient as it appears in the recipe and the name of the ingredient. Both of these properties should be strings. The name of the ingredient should not include any descriptive adjectives (i.e. omitting "small" from "1 small potato"). Exclude any ingredients that are not food items (i.e. "parchment paper" or "rimmed baking sheet"). Exclude salt and peppper.
