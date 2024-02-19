@@ -20,7 +20,7 @@
 </script>
 
 <svelte:head>
-  <title>User Management</title>
+  <title>Recipe Retrieve</title>
 </svelte:head>
 
 <div>
