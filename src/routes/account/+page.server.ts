@@ -1,15 +1,16 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals: { supabase, getSession } }) => {
+export const load = async ({ locals: { supabase, getUser, getSession } }) => {
+  const user = await getUser();
   const session = await getSession();
 
-  if (!session) {
+  if (!user || !session) {
     throw redirect(303, '/');
   }
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select(`username, full_name, website, avatar_url`)
+    .select('email, full_name, avatar_url')
     .eq('id', session.user.id)
     .single();
 

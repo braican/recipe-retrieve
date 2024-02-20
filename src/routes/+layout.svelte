@@ -2,12 +2,13 @@
 <script lang="ts">
   import { invalidate } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { Masthead } from '@components';
   import '../styles/app.css';
 
   export let data;
 
-  let { supabase, session } = data;
-  $: ({ supabase, session } = data);
+  let { supabase, session, user } = data;
+  $: ({ supabase, session, user } = data);
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((event, _session) => {
@@ -25,5 +26,7 @@
 </svelte:head>
 
 <div>
+  <Masthead />
+
   <slot />
 </div>
