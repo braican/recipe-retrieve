@@ -5,10 +5,6 @@
   export let data;
 </script>
 
-<svelte:head>
-  <title>User Management</title>
-</svelte:head>
-
 <div>
   <div>
     <Auth
