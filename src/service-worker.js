@@ -37,6 +37,11 @@ self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
     const cache = await caches.open(CACHE);
 
+    // only cache requests with a 'http' or 'https' scheme
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return fetch(event.request);
+    }
+
     // `build`/`files` can always be served from the cache
     if (ASSETS.includes(url.pathname)) {
       const response = await cache.match(url.pathname);

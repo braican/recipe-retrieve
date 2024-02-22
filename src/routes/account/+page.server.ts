@@ -1,11 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals: { supabase, getUser, getSession } }) => {
-  const user = await getUser();
+export const load = async ({ locals: { supabase, getSession } }) => {
   const session = await getSession();
 
-  if (!user || !session) {
-    throw redirect(303, '/');
+  if (!session) {
+    redirect(303, '/');
   }
 
   const { data: profile } = await supabase
@@ -56,7 +55,7 @@ export const actions = {
     const session = await getSession();
     if (session) {
       await supabase.auth.signOut();
-      throw redirect(303, '/');
+      redirect(303, '/');
     }
   },
 };

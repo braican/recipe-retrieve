@@ -7,12 +7,10 @@ declare global {
   namespace App {
     interface Locals {
       supabase: SupabaseClient;
-      getUser(): Promise<User | null>;
       getSession(): Promise<Session | null>;
     }
     interface PageData {
-      user: User | null;
-      session: Sessoin | null;
+      session: Session | null;
     }
     // interface Error {}
     // interface Platform {}

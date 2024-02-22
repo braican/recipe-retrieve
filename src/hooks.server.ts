@@ -1,28 +1,39 @@
 // src/hooks.server.ts
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
+import { createServerClient } from '@supabase/ssr';
 import type { Handle } from '@sveltejs/kit';
 
+// https://www.youtube.com/watch?v=lSm0GNnh-0I
+
 export const handle: Handle = async ({ event, resolve }) => {
-  event.locals.supabase = createSupabaseServerClient({
-    supabaseUrl: PUBLIC_SUPABASE_URL,
-    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
-    event,
+  event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    cookies: {
+      get: key => event.cookies.get(key),
+      set: (key, value, options) => {
+        event.cookies.set(key, value, { ...options, path: '/' });
+      },
+      remove: (key, options) => {
+        event.cookies.delete(key, { ...options, path: '/' });
+      },
+    },
   });
 
-  /**
-   * Convenience helpers so we can just call await getSession() instead const { data: { session } } = await supabase.auth.getSession()
-   */
-  event.locals.getUser = async () => {
-    const {
-      data: { user },
-    } = await event.locals.supabase.auth.getUser();
-    return user;
-  };
   event.locals.getSession = async () => {
+    // Using `getUser()` here guarantees that the stored session is valid, and
+    // calling getSession immediately after leaves no room for anyone to modify the
+    // stored session.
+    const { data: getUserData } = await event.locals.supabase.auth.getUser();
     const {
       data: { session },
     } = await event.locals.supabase.auth.getSession();
+
+    // Handle the case of the user not being found in the database while the browser
+    // still has a valid session. +layout.server.js will delete the cookie if the
+    // session is null
+    if (getUserData.user == null) {
+      return null;
+    }
+
     return session;
   };
 
