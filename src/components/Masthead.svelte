@@ -1,3 +1,53 @@
+<script lang="ts">
+  import type { SubmitFunction } from '@sveltejs/kit';
+  import { enhance } from '$app/forms';
+  import { goto } from '$app/navigation';
+  import { authStore } from '@stores';
+
+  let loading = false;
+
+  const { supabase, session } = authStore;
+
+  const signInWithGoogle: SubmitFunction = async ({ cancel }) => {
+    loading = true;
+    const success = await $supabase?.auth.signInWithOAuth({
+      provider: 'google',
+    });
+
+    if (!success) {
+      console.error('Error signing in with Google');
+    }
+
+    loading = false;
+    cancel();
+  };
+
+  const handleSignOut: SubmitFunction = async ({ cancel }) => {
+    loading = true;
+    if ($supabase) {
+      await $supabase.auth.signOut();
+    }
+
+    loading = false;
+
+    authStore.logout();
+    cancel();
+    goto('/');
+  };
+</script>
+
 <header>
   <h1>Recipe Retrieve</h1>
+
+  {#if $session}
+    <p>Logged in as {$session.user.email}</p>
+    <form method="POST" action="/auth/logout" use:enhance={handleSignOut}>
+      <button disabled={loading}>Sign Out</button>
+    </form>
+  {:else}
+    <p>Lopgged out</p>
+    <form action="/auth/login" method="POST" use:enhance={signInWithGoogle}>
+      <button disabled={loading}>Log in with Google</button>
+    </form>
+  {/if}
 </header>
