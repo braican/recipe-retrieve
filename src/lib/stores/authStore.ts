@@ -13,5 +13,6 @@ export default {
   logout: () => {
     session.set(null);
     supabase.set(null);
+    user.set(null);
   },
 };

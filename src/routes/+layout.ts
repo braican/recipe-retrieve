@@ -34,8 +34,6 @@ export const load = async ({ fetch, data, depends }) => {
       .eq('id', session.user.id)
       .single();
 
-    console.log(userProfile);
-
     user = userProfile;
   }
 

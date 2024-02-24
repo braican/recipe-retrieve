@@ -4,11 +4,9 @@ export const GET = () => {
   redirect(303, '/');
 };
 
-export const POST = async ({ locals }) => {
-  const session = await locals.getSession();
-
+export const POST = async ({ locals: { supabase, session } }) => {
   if (session) {
-    await locals.supabase.auth.signOut();
+    await supabase.auth.signOut();
   }
 
   redirect(303, '/');

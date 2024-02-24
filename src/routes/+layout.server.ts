@@ -2,15 +2,14 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ url, locals: { supabase, getSession } }) => {
+export const load: LayoutServerLoad = async ({ url, locals: { supabase, session } }) => {
   const code = url.searchParams.get('code');
-  const session = await getSession();
 
   if (!session && code) {
     try {
       await supabase.auth.exchangeCodeForSession(code);
     } catch (e) {
-      console.log('Invalid auth code.', e);
+      console.error('Invalid auth code.', e);
     }
 
     redirect(303, '/');
