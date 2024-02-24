@@ -2,7 +2,7 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { createBrowserClient, isBrowser, parse } from '@supabase/ssr';
 
-export const load = async ({ url, fetch, data, depends }) => {
+export const load = async ({ fetch, data, depends }) => {
   depends('supabase:auth');
 
   const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
@@ -25,5 +25,19 @@ export const load = async ({ url, fetch, data, depends }) => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return { supabase, session, url: url.origin };
+  let user = null;
+
+  if (session) {
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select(`email, fullName:full_name, avatar:avatar_url`)
+      .eq('id', session.user.id)
+      .single();
+
+    console.log(userProfile);
+
+    user = userProfile;
+  }
+
+  return { supabase, session, user };
 };

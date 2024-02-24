@@ -2,11 +2,11 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
-  import { authStore } from '@stores';
+  import { authStore } from '$lib/stores';
 
   let loading = false;
 
-  const { supabase, session } = authStore;
+  const { supabase, user } = authStore;
 
   const signInWithGoogle: SubmitFunction = async ({ cancel }) => {
     loading = true;
@@ -39,8 +39,8 @@
 <header>
   <h1>Recipe Retrieve</h1>
 
-  {#if $session}
-    <p>Logged in as {$session.user.email}</p>
+  {#if $user}
+    <p>Logged in as {$user.email}</p>
     <form method="POST" action="/auth/logout" use:enhance={handleSignOut}>
       <button disabled={loading}>Sign Out</button>
     </form>

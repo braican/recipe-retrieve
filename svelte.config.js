@@ -14,8 +14,7 @@ const config = {
     adapter: adapter(),
 
     alias: {
-      '@components': './src/components/index.js',
-      '@stores': './src/stores/index.js',
+      $userTypes: './types/index.ts',
     },
   },
 };

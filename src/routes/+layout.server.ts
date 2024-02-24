@@ -10,8 +10,7 @@ export const load: LayoutServerLoad = async ({ url, locals: { supabase, getSessi
     try {
       await supabase.auth.exchangeCodeForSession(code);
     } catch (e) {
-      console.log(e);
-      console.log('Invalid auth code.');
+      console.log('Invalid auth code.', e);
     }
 
     redirect(303, '/');

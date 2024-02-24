@@ -2,17 +2,18 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { invalidate } from '$app/navigation';
-  import { Masthead } from '@components';
-  import { authStore } from '@stores';
+  import { Masthead } from '$lib/components';
+  import { authStore } from '$lib/stores';
   import '../styles/app.css';
 
   export let data;
 
-  let { supabase, session } = data;
-  $: ({ supabase, session } = data);
+  let { supabase, session, user } = data;
+  $: ({ supabase, session, user } = data);
 
   authStore.session.set(session);
   authStore.supabase.set(supabase);
+  authStore.user.set(user);
 
   onMount(() => {
     const {
