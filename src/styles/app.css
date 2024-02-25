@@ -1,5 +1,32 @@
+@import '_reset.css';
+@import '_spacing.css';
+@import '_layout.css';
+@import '_type.css';
+
 :root {
-  --primary-color: #c36e70;
-  --secondary-color: #2e4a62;
-  --bg-color: #fbfdfa;
+  /* Colors */
+  --c-primary: #c36e70;
+  --c-secondary: #2e4a62;
+  --c-bg: #fbfdfa;
+  --c-gray: #f2f0f0;
+  --c-gray-accent: #e0d8d8;
+  --c-dark-gray: #d9d9d9;
+  --c-light-text: var(--c-bg);
+
+  /* Type */
+  --font-family: 'Libre Franklin', sans-serif;
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.75rem;
+
+  /* Spacing */
+  --sp-1: 0.5rem;
+  --sp-2: 1rem;
+
+  /*  */
+  --border-radius: 0.25rem;
+  --transition: 0.15s ease-in-out;
 }

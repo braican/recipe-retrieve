@@ -1,0 +1,23 @@
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  font-family: var(--font-family);
+  line-height: 1.5;
+  font-optical-sizing: auto;
+  font-weight: var(--fw-normal);
+  font-style: normal;
+}
+
+/* Buttons */
+.button {
+  transition: background-color var(--transition);
+  border-radius: var(--border-radius);
+  background-color: var(--c-primary);
+  border: 0;
+  padding: var(--sp-1) var(--sp-2);
+  color: var(--c-light-text);
+}
+.button:hover {
+  background-color: var(--c-secondary);
+}

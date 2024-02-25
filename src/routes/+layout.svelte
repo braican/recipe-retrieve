@@ -32,8 +32,10 @@
   <title>Recipe Retrieve</title>
 </svelte:head>
 
-<div>
+<div class="app">
   <Masthead />
 
-  <slot />
+  <main class="p-2">
+    <slot />
+  </main>
 </div>

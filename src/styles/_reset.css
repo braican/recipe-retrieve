@@ -1,0 +1,78 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+ol,
+ul,
+dl,
+dd {
+  margin: 0;
+}
+
+ul[class],
+ol[class] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+label {
+  line-height: 1.1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  padding: unset;
+  border: unset;
+  border-radius: unset;
+  border: unset;
+  background-color: unset;
+}
+
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+:target {
+  scroll-margin-block: 1rlh;
+}
