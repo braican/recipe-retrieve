@@ -50,4 +50,10 @@
       <button disabled={loading}>Log in with Google</button>
     </form>
   {/if}
+
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/account">Account</a></li>
+    <li><a href="/kitchen">Kitchen</a></li>
+  </ul>
 </header>

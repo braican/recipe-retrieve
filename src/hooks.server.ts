@@ -32,9 +32,14 @@ export const handle: Handle = async ({ event, resolve }) => {
   // session is null
   event.locals.session = getUserData.user == null ? null : session;
 
-  const isProtectedRoute = event.route.id?.startsWith('/(protected)/');
+  const isProtectedRoute = event.route.id?.startsWith('/(protected)');
   if (isProtectedRoute && !event.locals.session) {
     redirect(303, '/');
+  }
+
+  const isAnonymousRoute = event.route.id?.startsWith('/(anonymous)');
+  if (isAnonymousRoute && event.locals.session) {
+    redirect(303, '/kitchen');
   }
 
   return resolve(event, {
