@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { SubmitFunction } from '@sveltejs/kit';
-  import { enhance } from '$app/forms';
   import { authStore } from '$lib/stores';
   import LogoIcon from '$lib/icons/recipe-retrieve-logo.svg?raw';
   import GenericAvatar from '$lib/icons/generic-avatar.svg?raw';
@@ -8,23 +6,7 @@
   let loading = false;
   let utilityMenuOpen = false;
 
-  const { supabase, user } = authStore;
-
-  const signInWithGoogle: SubmitFunction = async ({ cancel }) => {
-    loading = true;
-
-    const success = await $supabase?.auth.signInWithOAuth({
-      provider: 'google',
-    });
-
-    if (!success) {
-      console.error('There was an error signing you in with Google.');
-      return;
-    }
-
-    loading = false;
-    cancel();
-  };
+  const { user } = authStore;
 
   const closeMenu = (event: MouseEvent | null = null) => {
     const clickedElement = event?.target as HTMLElement;
@@ -76,7 +58,7 @@
         </ul>
       {/if}
     {:else}
-      <form action="/auth/login" method="POST" use:enhance={signInWithGoogle}>
+      <form action="/auth/login" method="POST">
         <button class="button" disabled={loading}>Log in with Google</button>
       </form>
     {/if}
