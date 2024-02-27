@@ -2,18 +2,28 @@
   // your script goes here
 </script>
 
-<form>
-  <label for="title">Title</label>
-  <input type="text" id="title" name="title" />
+<form class="add-recipe-form">
+  <label class="form-label-group">
+    <span class="form-label">Title</span>
+    <input type="text" name="title" placeholder="Chicken cacciatore" />
+  </label>
 
-  <label for="description">Description</label>
-  <textarea id="description" name="description"></textarea>
+  <label class="form-label-group">
+    <span class="form-label">Source</span>
+    <input type="url" name="title" placeholder="https://seriouseats.com" />
+  </label>
 
-  <label for="ingredients">Ingredients</label>
-  <textarea id="ingredients" name="ingredients"></textarea>
+  <label class="form-label-group">
+    <span class="form-label">Recipe</span>
+    <textarea name="recipe"></textarea>
+  </label>
 
-  <label for="instructions">Instructions</label>
-  <textarea id="instructions" name="instructions"></textarea>
-
-  <button type="submit">Add Recipe</button>
+  <button class="button" type="submit">Add Recipe</button>
+  <a href="/kitchen">Cancel</a>
 </form>
+
+<style>
+  .add-recipe-form {
+    view-transition-name: newRecipe;
+  }
+</style>

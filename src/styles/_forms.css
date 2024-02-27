@@ -1,0 +1,21 @@
+.form-label-group {
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-size: var(--fs--1);
+  font-weight: var(--fw-semibold);
+}
+
+.form-label-group input[type='text'],
+.form-label-group input[type='url'],
+.form-label-group textarea {
+  width: 100%;
+  padding: var(--sp-3);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--c-gray-accent);
+  background-color: var(--c-gray);
+}

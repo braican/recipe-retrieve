@@ -75,6 +75,7 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--sp-3);
+    view-transition-name: header;
   }
   .logo {
     margin-top: calc(var(--sp-3) * -2);

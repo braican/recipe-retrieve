@@ -17,7 +17,7 @@ html {
   border-radius: var(--border-radius);
   background-color: var(--c-primary);
   border: 0;
-  padding: var(--sp-1) var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
   color: var(--c-light-text);
 }
 .button:hover {

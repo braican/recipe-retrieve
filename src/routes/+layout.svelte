@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import { invalidate } from '$app/navigation';
+  import { invalidate, onNavigate } from '$app/navigation';
   import { Masthead, Nav } from '$lib/components';
   import { authStore } from '$lib/stores';
   import '../styles/app.css';
@@ -15,6 +15,17 @@
   authStore.session.set(session);
   authStore.supabase.set(supabase);
   authStore.user.set(user);
+
+  onNavigate(navigation => {
+    if (!document.startViewTransition) return;
+
+    return new Promise(resolve => {
+      document.startViewTransition(async () => {
+        resolve();
+        await navigation.complete;
+      });
+    });
+  });
 
   onMount(() => {
     const {
