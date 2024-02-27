@@ -1,0 +1,1 @@
+export { getMeal } from './getMeal';

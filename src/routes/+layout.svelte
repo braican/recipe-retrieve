@@ -1,8 +1,9 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { page } from '$app/stores';
   import { invalidate } from '$app/navigation';
-  import { Masthead } from '$lib/components';
+  import { Masthead, Nav } from '$lib/components';
   import { authStore } from '$lib/stores';
   import '../styles/app.css';
 
@@ -29,13 +30,28 @@
 </script>
 
 <svelte:head>
-  <title>Recipe Retrieve</title>
+  <title>{$page.data.pageTitle ? `${$page.data.pageTitle} | ` : ''}Recipe Retrieve</title>
 </svelte:head>
 
 <div class="app">
   <Masthead />
 
-  <main class="p-2">
+  <main class="p-3">
     <slot />
   </main>
+
+  <Nav />
 </div>
+
+<style>
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .app main {
+    display: block;
+    flex: 1;
+    overflow: auto;
+  }
+</style>

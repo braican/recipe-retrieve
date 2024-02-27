@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import { authStore } from '$lib/stores';
   import LogoIcon from '$lib/icons/recipe-retrieve-logo.svg?raw';
   import GenericAvatar from '$lib/icons/generic-avatar.svg?raw';
@@ -27,12 +28,14 @@
   };
 </script>
 
-<header class="masthead p-1">
-  <span class="logo"><a href="/" aria-label="Home">{@html LogoIcon}</a></span>
+<header class="masthead p-2">
+  <span class="logo"><a href="/" aria-label="Home" class="logo-link">{@html LogoIcon}</a></span>
+
+  <h1 class="page-title ff-headline fw-bold">{$page.data.pageTitle || 'Recipe Retrieve'}</h1>
 
   <div class="auth-controls">
     {#if $user}
-      <button on:click|stopPropagation={toggleMenuOpen}>
+      <button on:click|stopPropagation={toggleMenuOpen} class="utility-menu-trigger">
         <figure class="avatar">
           {#if $user.avatar}
             <img src={$user.avatar} alt={$user.fullName} referrerpolicy="no-referrer" />
@@ -45,7 +48,7 @@
       {#if utilityMenuOpen}
         <ul class="utility-menu">
           <li>
-            <p class="greeting">{$user.email}</p>
+            <p class="greeting fs--1">{$user.email}</p>
           </li>
           <li>
             <a on:click={() => closeMenu()} class="utility-link" href="/account">Account</a>
@@ -67,26 +70,48 @@
 
 <style>
   .masthead {
+    --shadow-color: 0deg 0% 90%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+  .logo {
+    margin-top: calc(var(--sp-3) * -2);
+  }
+  .logo-link {
+    display: block;
+    top: calc(var(--sp-3) * 2);
+    transition: transform var(--transition);
+  }
+  .logo-link:hover {
+    transform: translateY(-6px);
   }
   .logo :global(svg) {
+    transform: rotate(180deg);
     display: block;
     height: 60px;
+  }
+
+  .page-title {
+    flex: 1;
+    font-size: var(--fs-);
   }
 
   .auth-controls {
     position: relative;
   }
 
-  .avatar {
-    width: 46px;
-    height: 46px;
+  .utility-menu-trigger {
     display: block;
-    border-radius: 50%;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    display: block;
+    border-radius: var(--border-radius-max);
     overflow: hidden;
-    background-color: var(--c-gray-accent);
-    border: 3px solid var(--c-dark-gray);
   }
   .avatar img {
     width: 100%;
@@ -97,12 +122,13 @@
     position: absolute;
     right: 0;
     margin: 0;
-    padding: 0;
     list-style: none;
     text-align: right;
     border-radius: var(--border-radius);
-    background-color: var(--c-gray);
-    padding: var(--sp-1);
+    background-color: var(--c-secondary);
+    padding: var(--sp-2);
+    margin-top: var(--sp-3);
+    color: var(--c-gray);
   }
   .utility-menu li {
     white-space: nowrap;
@@ -112,7 +138,6 @@
     font-weight: var(--fw-semibold);
     border-bottom: 1px solid var(--c-gray-accent);
     margin-bottom: var(--sp-1);
-    font-size: var(--fs-sm);
   }
   .utility-link {
     display: block;
@@ -123,9 +148,9 @@
     font-weight: var(--fw-medium);
     padding: var(--sp-1);
     text-align: right;
-    font-size: var(--fs-sm);
+    color: inherit;
   }
   .utility-link:hover {
-    color: var(--c-primary);
+    color: var(--c-primary-light);
   }
 </style>

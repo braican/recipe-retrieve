@@ -2,11 +2,13 @@ html {
   -moz-text-size-adjust: none;
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
-  font-family: var(--font-family);
+  font-family: var(--font-base);
   line-height: 1.5;
   font-optical-sizing: auto;
   font-weight: var(--fw-normal);
   font-style: normal;
+  font-variation-settings: 'slnt' 0;
+  font-size: var(--fs-base);
 }
 
 /* Buttons */
@@ -20,4 +22,32 @@ html {
 }
 .button:hover {
   background-color: var(--c-secondary);
+}
+
+.h1 {
+  font-family: var(--font-headline);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-3);
+  line-height: 1.1;
+  margin-bottom: var(--sp-2);
+}
+
+.h2 {
+  font-family: var(--font-headline);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-2);
+  line-height: 1.1;
+  margin-bottom: var(--sp-2);
+}
+
+.fs--1 {
+  font-size: var(--fs--1);
+}
+
+.ff-headline {
+  font-family: var(--font-headline);
+}
+
+.fw-bold {
+  font-weight: var(--fw-bold);
 }

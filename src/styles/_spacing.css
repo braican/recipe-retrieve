@@ -4,3 +4,6 @@
 .p-2 {
   padding: var(--sp-2);
 }
+.p-3 {
+  padding: var(--sp-3);
+}
