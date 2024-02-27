@@ -14,7 +14,8 @@
 .form-label-group input[type='url'],
 .form-label-group textarea {
   width: 100%;
-  padding: var(--sp-3);
+  font-size: 16px;
+  padding: 1em;
   border-radius: var(--border-radius);
   border: 1px solid var(--c-gray-accent);
   background-color: var(--c-gray);

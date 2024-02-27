@@ -15,6 +15,7 @@
   --c-gray: #f2f0f0;
   --c-gray-accent: #e2e2e2;
   --c-light-text: var(--c-bg);
+  --c-alert-red: #ff0000;
 
   /* Type */
   --font-base: 'Inter', sans-serif;
@@ -35,7 +36,7 @@
   --fs-4: clamp(2.4414rem, 2.3166rem + 0.5549vi, 2.7466rem);
 
   /* Spacing */
-  --sp-1: 0.2rem;
+  --sp-1: 0.25rem;
   --sp-2: 0.5rem;
   --sp-3: 1rem;
 
