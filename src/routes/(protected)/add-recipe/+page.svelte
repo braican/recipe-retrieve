@@ -1,80 +1,104 @@
 <script lang="ts">
+  import { BasicLink, Input, MultiInput, Toggle } from '$lib/ui';
+  import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
+
   export let form;
-  let recipeImage = '';
 
+  // Form values.
+  let title = '';
+  let source = '';
   let image = '';
+  let recipe = '';
+  let ingredients: string[] = [];
+  let steps: string[] = [];
 
-  let view: 'aiParse' | 'manualInput' = 'aiParse';
-  let formAction = '?/parse';
+  // Other state.
+  let renderImage = '';
+  let showManualInput = true;
+
   let error: string | null = null;
-
-  if (form?.action === 'parse') {
-    if (form.error) {
-      error = form.error;
-    }
+  if (form?.error) {
+    error = form.error;
   }
 
-  const setImage = () => {
+  let formAction = '?/parse';
+
+  if (form?.action === 'parse') {
+  }
+
+  const setImage = async () => {
     if (image) {
       fetch(image).then(response => {
-        recipeImage = response.ok ? image : '';
+        renderImage = response.ok ? image : '';
       });
     } else {
-      recipeImage = '';
+      renderImage = '';
     }
   };
 </script>
 
-<form method="POST" class="add-recipe-form">
-  {#if recipeImage}
+<article class="trs-in-slideup">
+  {#if renderImage}
     <figure class="background-image">
-      <img src={recipeImage} alt="recipe shot" />
+      <img src={renderImage} alt="recipe shot" />
     </figure>
   {/if}
-  <label class="form-label-group">
-    <span class="form-label">Title</span>
-    <input type="text" name="title" placeholder="Chicken cacciatore" />
-  </label>
 
-  <label class="form-label-group">
-    <span class="form-label">Source</span>
-    <input type="url" name="title" placeholder="https://seriouseats.com" />
-  </label>
+  <header class="mb-4">
+    <BasicLink href="/kitchen" icon={LeftArrowIcon}>Back</BasicLink>
+  </header>
 
-  <label class="form-label-group">
-    <span class="form-label">Image</span>
-    <input type="url" name="image" bind:value={image} on:blur={setImage} />
-  </label>
+  <form method="POST" class="add-recipe-form">
+    {#if error}
+      <p class="error mb-4">{error}</p>
+    {/if}
 
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
+    <Input label="Title" name="title" placeholder="Chicken cacciatore" bind:value={title} />
+    <Input
+      label="Source"
+      type="url"
+      name="source"
+      placeholder="https://seriouseats.com"
+      bind:value={source} />
+    <Input
+      label="Image"
+      type="url"
+      name="image"
+      placeholder="https://images.unsplash.com/photo"
+      bind:value={image}
+      on:blur={setImage} />
 
-  {#if view === 'aiParse'}
-    <label class="form-label-group">
-      <span class="form-label">Recipe</span>
-      <textarea name="recipe"></textarea>
-    </label>
-  {:else if view === 'manualInput'}{/if}
+    <Toggle label="Manual input" bind:status={showManualInput} />
 
-  <button class="button" type="submit" formaction={formAction}>Add Recipe</button>
-</form>
+    {#if showManualInput}
+      <MultiInput label="Ingredients" addMore="Add ingredient" bind:values={ingredients} />
+      <MultiInput label="Steps" addMore="Add step" bind:values={steps} type="textarea" />
+    {:else}
+      <Input
+        label="Recipe"
+        type="textarea"
+        name="recipe"
+        placeholder="Paste recipe here"
+        bind:value={recipe} />
+    {/if}
+
+    <div class="mt-4">
+      <button class="button" type="submit" formaction={formAction}>Add Recipe</button>
+    </div>
+  </form>
+</article>
 
 <style>
-  .add-recipe-form {
-    view-transition-name: newRecipe;
-    position: relative;
-  }
-
   .background-image {
     width: 100vw;
-    height: 50vh;
+    height: 30vh;
     position: absolute;
-    left: calc(var(--sp-3) * -1);
-    top: calc(var(--sp-3) * -1);
+    left: 0;
+    top: 0;
     margin: 0;
     z-index: -1;
     display: block;
+    opacity: 0.5;
   }
   .background-image:after {
     content: '';
@@ -85,7 +109,6 @@
     height: 80%;
     background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
   }
-
   .background-image img {
     width: 100%;
     height: 100%;

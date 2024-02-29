@@ -24,7 +24,7 @@
   animation: 210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in;
 }
 
-:root::view-transition-new(newRecipe) {
+:root::view-transition-new(slideup) {
   animation:
     210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
     300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-up;
@@ -36,4 +36,8 @@
   ::view-transition-new(*) {
     animation: none !important;
   }
+}
+
+.trs-in-slideup {
+  view-transition-name: slideup;
 }

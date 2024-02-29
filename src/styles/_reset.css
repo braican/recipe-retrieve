@@ -59,6 +59,8 @@ h4,
 h5,
 h6 {
   text-wrap: balance;
+  font-size: var(--fs-0);
+  font-weight: var(--fw-semibold);
 }
 
 input,

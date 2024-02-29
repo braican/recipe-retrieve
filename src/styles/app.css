@@ -2,7 +2,6 @@
 @import '_spacing.css';
 @import '_layout.css';
 @import '_type.css';
-@import '_forms.css';
 @import '_page-transitions.css';
 
 :root {
@@ -10,21 +9,25 @@
   --c-white: #ffffff;
   --c-primary: #f2483d;
   --c-primary-light: #ff938d;
+  --c-primary-transparent: rgba(242, 72, 61, 0.1);
+  --c-primary-transparent-hover: rgba(242, 72, 61, 0.4);
+  --c-primary-dark: #aa0f07;
   --c-secondary: #32d5c0;
   --c-secondary-light: #88ecde;
   --c-dark: #1f2d3f;
+  --c-dark-accent: #4c5c70;
   --c-bg: #fbfdfa;
   --c-gray: #f9f9f9;
   --c-gray-accent: #e6e6e6;
+  --c-gray-dark: #999;
   --c-light-text: var(--c-bg);
   --c-alert-red: #ff0000;
 
   /* Type */
-  --font-base: 'Inter', sans-serif;
-  --font-headline: 'Manrope', 'Inter', sans-serif;
-  --fw-light: 200;
-  --fw-normal: 400;
-  --fw-semibold: 600;
+  --font-base: 'Manrope', sans-serif;
+  --fw-light: 300;
+  --fw-normal: 500;
+  --fw-semibold: 700;
   --fw-bold: 800;
 
   /* Type scale */
@@ -41,6 +44,7 @@
   --sp-1: 0.25rem;
   --sp-2: 0.5rem;
   --sp-3: 1rem;
+  --sp-4: 2rem;
 
   /*  */
   --border-radius: 0.25rem;

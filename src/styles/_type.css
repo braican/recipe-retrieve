@@ -11,44 +11,48 @@ html {
   font-size: var(--fs-base);
 }
 
+/* Utility */
+.sr-only:not(:focus):not(:active) {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 /* Buttons */
-.button {
+.button,
+.button-secondary {
   transition: background-color var(--transition);
   border-radius: var(--border-radius);
-  background-color: var(--c-primary);
   border: 0;
+}
+
+.button {
+  background-color: var(--c-primary);
   padding: var(--sp-2) var(--sp-3);
   color: var(--c-light-text);
+  font-weight: var(--fw-semibold);
 }
 .button:hover {
-  background-color: var(--c-secondary);
+  background-color: var(--c-dark);
 }
 
-.button--secondary {
-  background-color: var(--c-gray);
-  color: var(--c-secondary);
+.button-secondary {
+  background-color: var(--c-primary-transparent);
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs--1);
 }
-.button--secondary:hover {
-  background-color: var(--c-gray-accent);
-  color: var(--c-secondary);
-}
-
-/* Links */
-
-.link {
-}
-
-.link:hover {
+.button-secondary:hover {
+  background-color: var(--c-primary-transparent-hover);
 }
 
 /* Headers */
 
 .fs--1 {
   font-size: var(--fs--1);
-}
-
-.ff-headline {
-  font-family: var(--font-headline);
 }
 
 .fw-bold {
