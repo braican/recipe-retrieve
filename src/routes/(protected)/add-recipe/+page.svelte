@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { ManualInputForm } from '$lib/components';
-
   export let form;
   let recipeImage = '';
 
@@ -52,34 +50,14 @@
     <p class="error">{error}</p>
   {/if}
 
-  <ul class="inline-list mb-3 pt-3">
-    <li>
-      <button
-        type="button"
-        class="tab-button"
-        class:tab-button--active={view === 'aiParse'}
-        on:click={() => (view = 'aiParse')}>Paste</button>
-    </li>
-    <li>
-      <button
-        type="button"
-        class="tab-button"
-        class:tab-button--active={view === 'manualInput'}
-        on:click={() => (view = 'manualInput')}>Manual input</button>
-    </li>
-  </ul>
-
   {#if view === 'aiParse'}
     <label class="form-label-group">
       <span class="form-label">Recipe</span>
       <textarea name="recipe"></textarea>
     </label>
-  {:else if view === 'manualInput'}
-    <ManualInputForm />
-  {/if}
+  {:else if view === 'manualInput'}{/if}
 
-  <button class="button" type="submit" formaction={formAction}>Add Recipe</button>&nbsp;&nbsp;
-  <a href="/kitchen" class="link">Cancel</a>
+  <button class="button" type="submit" formaction={formAction}>Add Recipe</button>
 </form>
 
 <style>

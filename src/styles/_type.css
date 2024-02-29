@@ -33,55 +33,15 @@ html {
   color: var(--c-secondary);
 }
 
-.tab-button {
-  transition:
-    background-color var(--transition),
-    color var(--transition);
-  border-radius: var(--border-radius);
-  background-color: transparent;
-  border: 0;
-  padding: var(--sp-1) var(--sp-2);
-  color: var(--c-secondary);
-  font-size: var(--fs--1);
-}
-.tab-button:hover {
-  background-color: var(--c-gray);
-  color: var(--c-secondary);
-}
-.tab-button--active {
-  background-color: var(--c-secondary);
-  color: var(--c-light-text);
-}
-
 /* Links */
 
 .link {
-  color: var(--c-secondary);
-  text-decoration: underline;
-  transition: color var(--transition);
 }
 
 .link:hover {
-  color: var(--c-primary);
 }
 
 /* Headers */
-
-.h1 {
-  font-family: var(--font-headline);
-  font-weight: var(--fw-bold);
-  font-size: var(--fs-3);
-  line-height: 1.1;
-  margin-bottom: var(--sp-2);
-}
-
-.h2 {
-  font-family: var(--font-headline);
-  font-weight: var(--fw-bold);
-  font-size: var(--fs-2);
-  line-height: 1.1;
-  margin-bottom: var(--sp-2);
-}
 
 .fs--1 {
   font-size: var(--fs--1);
@@ -96,7 +56,3 @@ html {
 }
 
 /* Lists */
-.inline-list {
-  display: flex;
-  gap: var(--sp-2);
-}

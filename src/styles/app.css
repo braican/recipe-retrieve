@@ -7,13 +7,15 @@
 
 :root {
   /* Colors */
-  --c-primary: #c36e70;
-  --c-primary-light: #f68c8e;
-  --c-secondary: #2e4a62;
-  --c-bg: #fbfdfa;
   --c-white: #ffffff;
-  --c-gray: #f2f0f0;
-  --c-gray-accent: #e2e2e2;
+  --c-primary: #f2483d;
+  --c-primary-light: #ff938d;
+  --c-secondary: #32d5c0;
+  --c-secondary-light: #88ecde;
+  --c-dark: #1f2d3f;
+  --c-bg: #fbfdfa;
+  --c-gray: #f9f9f9;
+  --c-gray-accent: #e6e6e6;
   --c-light-text: var(--c-bg);
   --c-alert-red: #ff0000;
 

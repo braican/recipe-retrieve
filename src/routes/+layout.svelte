@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { invalidate, onNavigate } from '$app/navigation';
-  import { Masthead, Nav } from '$lib/components';
+  import { Masthead } from '$lib/components';
   import { authStore } from '$lib/stores';
   import '../styles/app.css';
 
@@ -47,22 +47,7 @@
 <div class="app">
   <Masthead />
 
-  <main class="p-3">
+  <main class="p-2">
     <slot />
   </main>
-
-  <Nav />
 </div>
-
-<style>
-  .app {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  .app main {
-    display: block;
-    flex: 1;
-    overflow: auto;
-  }
-</style>

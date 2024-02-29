@@ -10,18 +10,6 @@
   }
 }
 
-@keyframes slide-from-right {
-  from {
-    transform: translateX(30px);
-  }
-}
-
-@keyframes slide-to-left {
-  to {
-    transform: translateX(-30px);
-  }
-}
-
 @keyframes slide-up {
   from {
     transform: translateY(30px);
