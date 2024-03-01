@@ -115,10 +115,5 @@ export const actions = {
     // console.log(title, source, image, ingredients, steps);
 
     redirect(303, '/kitchen');
-
-    return {
-      action: 'submit',
-      success: true,
-    };
   },
 };
