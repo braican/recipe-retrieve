@@ -1,19 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import TrashIcon from '$lib/icons/trash.svg?raw';
-  const dispatch = createEventDispatcher();
+
+  let itemList: HTMLTextAreaElement[] | HTMLInputElement[] = [];
 
   type AllowedInputTypes = 'text' | 'textarea';
   export let type: AllowedInputTypes = 'text';
   export let label = '';
+  export let name = '';
   export let addMore = '';
 
   export let values: string[] = [];
 
-  console.log(values);
-
   const addValue = () => {
     values = [...values.filter(x => x), ''];
+  };
+
+  const focusOnInput = (node: HTMLInputElement | HTMLTextAreaElement) => {
+    node.focus();
   };
 </script>
 
@@ -26,12 +29,6 @@
     <ul class="mb-2">
       {#each values as value, i}
         <li class="mb-1 item">
-          {#if type === 'textarea'}
-            <textarea bind:value={values[i]} rows="2"></textarea>
-          {:else}
-            <input type="text" bind:value={values[i]} />
-          {/if}
-
           <button
             type="button"
             class="remove"
@@ -39,13 +36,30 @@
             aria-label="Remove ingredient">
             {@html TrashIcon}
           </button>
+          {#if type === 'textarea'}
+            <textarea
+              {name}
+              bind:value={values[i]}
+              rows="2"
+              bind:this={itemList[i]}
+              use:focusOnInput></textarea>
+          {:else}
+            <input
+              {name}
+              type="text"
+              bind:value={values[i]}
+              bind:this={itemList[i]}
+              use:focusOnInput />
+          {/if}
         </li>
       {/each}
     </ul>
   {/if}
 
-  <button type="button" class="button-secondary" on:click={addValue} aria-label={addMore}
-    >+ {addMore}</button>
+  <div class="align-right">
+    <button type="button" class="button-secondary" on:click={addValue} aria-label={addMore}
+      >+ {addMore}</button>
+  </div>
 </fieldset>
 
 <style>
@@ -76,12 +90,14 @@
   }
 
   .remove {
+    transition: color var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
     width: 44px;
     padding: var(--sp-2);
     color: var(--c-gray-accent);
+    order: 1;
   }
 
   .remove:hover {
