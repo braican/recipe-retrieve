@@ -31,6 +31,7 @@
       {type}
       {name}
       {placeholder}
+      {value}
       on:input={handleInput}
       on:blur={() => dispatch('blur', { value })} />
   {/if}

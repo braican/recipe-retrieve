@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
+  import type { ActionResult } from '@sveltejs/kit';
+  import type { SubmitFunction } from './$types.js';
   import { BasicLink, Input, MultiInput, Toggle } from '$lib/ui';
   import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
 
@@ -14,17 +17,25 @@
 
   // Other state.
   let renderImage = '';
-  let showManualInput = true;
-
+  let showManualInput = false;
+  let recipeParsed = false;
   let error: string | null = null;
+
   if (form?.error) {
     error = form.error;
   }
 
-  let formAction = '?/parse';
-
-  if (form?.action === 'parse') {
+  if (form && form.action === 'parse' && form.recipe) {
+    showManualInput = true;
+    title = form.recipe.title;
+    source = form.recipe.source;
+    image = form.recipe.image;
+    ingredients = form.recipe.ingredients;
+    steps = form.recipe.steps;
   }
+
+  let formAction = '?/parse';
+  $: formAction = showManualInput ? '?/submit' : '?/parse';
 
   const setImage = async () => {
     if (image) {
@@ -34,6 +45,38 @@
     } else {
       renderImage = '';
     }
+  };
+
+  const handleSubmit: SubmitFunction = () => {
+    return async ({ result, update }: { result: ActionResult; update: Function }) => {
+      if (result.status !== 400 && !showManualInput) {
+        recipeParsed = true;
+        showManualInput = true;
+      }
+
+      if (result.type === 'failure') {
+        console.log('Failure.', result);
+        error = result.data?.error;
+        return;
+      }
+
+      if (result.type === 'error') {
+        console.log('Error.', result);
+        error = result.error.message;
+        return;
+      }
+
+      if (result.type === 'success' && result.data?.action === 'parse' && result.data?.recipe) {
+        error = null;
+        ingredients = result.data.recipe.ingredients;
+        steps = result.data.recipe.steps;
+        return;
+      }
+
+      console.log('Saved to supabase');
+
+      update();
+    };
   };
 </script>
 
@@ -48,12 +91,12 @@
     <BasicLink href="/kitchen" icon={LeftArrowIcon}>Back</BasicLink>
   </header>
 
-  <form method="POST" class="add-recipe-form">
+  <form method="POST" class="add-recipe-form" use:enhance={handleSubmit}>
     {#if error}
       <p class="error mb-4">{error}</p>
     {/if}
 
-    <Input label="Title" name="title" placeholder="Chicken cacciatore" bind:value={title} />
+    <Input label="Title" name="title" placeholder="Chicken parmesan" bind:value={title} />
     <Input
       label="Source"
       type="url"
@@ -68,11 +111,22 @@
       bind:value={image}
       on:blur={setImage} />
 
-    <Toggle label="Manual input" bind:status={showManualInput} />
+    {#if !recipeParsed}
+      <Toggle label="Manual input" bind:status={showManualInput} />
+    {/if}
 
     {#if showManualInput}
-      <MultiInput label="Ingredients" addMore="Add ingredient" bind:values={ingredients} />
-      <MultiInput label="Steps" addMore="Add step" bind:values={steps} type="textarea" />
+      <MultiInput
+        label="Ingredients"
+        name="ingredients[]"
+        addMore="Add ingredient"
+        bind:values={ingredients} />
+      <MultiInput
+        label="Steps"
+        name="steps[]"
+        addMore="Add step"
+        bind:values={steps}
+        type="textarea" />
     {:else}
       <Input
         label="Recipe"

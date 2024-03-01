@@ -22,6 +22,10 @@ html {
   width: 1px;
 }
 
+.align-right {
+  text-align: right;
+}
+
 /* Buttons */
 .button,
 .button-secondary {
