@@ -3,7 +3,7 @@ import { GEMINI_AI_KEY } from '$env/static/private';
 import { fail, redirect } from '@sveltejs/kit';
 
 const prompt = `
-You are a helpful tool that can parse recipes from text and identify the ingredients and the steps present in the recipe. When presented with a recipe, you should return JSON consisting of three properties. The first should be of key "ingredients", which should be an array of strings representing the ingredients in the recipe along with their amounts. You should take this directly from the recipe input. The second should be key "steps", and this should be an array of strings representing the steps in the recipe. This should be taken directly from the recipe input with no changes.
+You are a helpful tool that can parse recipes from text and identify the ingredients and the steps present in the recipe. When presented with a recipe, you should return JSON consisting of three properties. The first should be of key "ingredients", which should be an array of strings representing the ingredients in the recipe along with their amounts. You should take this directly from the recipe input. The second should be key "steps", and this should be an array of strings representing the steps in the recipe. This should be taken directly from the recipe input with no changes. If you cannot parse the recipe because it has no ingredients or steps, simply return the number 0;
 
 Here's an example:
 
@@ -74,6 +74,18 @@ export const actions = {
 
     try {
       const parsedRecipe = await parseRecipe(recipe);
+      if (parsedRecipe === '0') {
+        return {
+          action: 'parse',
+          error: 'There was a problem parsing your recipe. You can still add it manually.',
+          recipe: {
+            title,
+            source,
+            image,
+          },
+        };
+      }
+
       const recipeJson = JSON.parse(parsedRecipe);
       return {
         action: 'parse',
@@ -85,6 +97,7 @@ export const actions = {
         },
       };
     } catch (e) {
+      console.log(e);
       if (e instanceof SyntaxError) {
         return fail(500, {
           error:
@@ -102,18 +115,42 @@ export const actions = {
     }
   },
 
-  submit: async ({ request }) => {
-    const data = await request.formData();
-    const title = data.get('title') as string;
-    const source = data.get('source') as string;
-    const image = data.get('image') as string;
-    const ingredients = data.getAll('ingredients[]') as string[];
-    const steps = data.getAll('steps[]') as string[];
+  submit: async ({ request, locals: { supabase, session } }) => {
+    if (!session) {
+      redirect(303, '/');
+    }
+    const formData = await request.formData();
+    const title = formData.get('title') as string;
+    const source = formData.get('source') as string;
+    const image = formData.get('image') as string;
+    const ingredients = formData.getAll('ingredients[]') as string[];
+    const steps = formData.getAll('steps[]') as string[];
 
-    console.log('submit to supabase');
+    if (!title) {
+      return fail(400, { error: 'You must provide a recipe title.' });
+    }
 
-    // console.log(title, source, image, ingredients, steps);
+    if (ingredients.length < 1 || steps.length < 1) {
+      return fail(400, { error: 'Your recipe must include at least one ingredient and one step.' });
+    }
 
-    redirect(303, '/kitchen');
+    const { data, error } = await supabase
+      .from('recipes')
+      .insert({
+        user_id: session.user.id,
+        title,
+        source_url: source,
+        image_url: image,
+        ingredients,
+        steps,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return fail(500, { error: error.message });
+    }
+
+    redirect(303, `/recipe/${data.id}`);
   },
 };

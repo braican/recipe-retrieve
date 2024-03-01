@@ -34,8 +34,8 @@
     steps = form.recipe.steps;
   }
 
-  let formAction = '?/parse';
   $: formAction = showManualInput ? '?/submit' : '?/parse';
+  $: buttonText = showManualInput ? 'Add Recipe' : 'Parse Recipe';
 
   const setImage = async () => {
     if (image) {
@@ -67,13 +67,11 @@
       }
 
       if (result.type === 'success' && result.data?.action === 'parse' && result.data?.recipe) {
-        error = null;
+        error = result.data.error || null;
         ingredients = result.data.recipe.ingredients;
         steps = result.data.recipe.steps;
         return;
       }
-
-      console.log('Saved to supabase');
 
       update();
     };
@@ -137,7 +135,7 @@
     {/if}
 
     <div class="mt-4">
-      <button class="button" type="submit" formaction={formAction}>Add Recipe</button>
+      <button class="button" type="submit" formaction={formAction}>{buttonText}</button>
     </div>
   </form>
 </article>
