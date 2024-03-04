@@ -2,6 +2,7 @@
 @import '_spacing.css';
 @import '_layout.css';
 @import '_type.css';
+@import '_forms.css';
 @import '_page-transitions.css';
 
 :root {

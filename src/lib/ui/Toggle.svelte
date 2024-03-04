@@ -1,6 +1,7 @@
 <script lang="ts">
   export let label = '';
   export let status = false;
+  export let disabled = false;
 </script>
 
 <label class="toggle mb-3">
@@ -12,6 +13,7 @@
     class="toggle-input"
     type="checkbox"
     checked={status}
+    {disabled}
     on:change={() => (status = !status)} />
   <span class="toggle-button"></span>
 </label>

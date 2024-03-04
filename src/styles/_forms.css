@@ -1,0 +1,21 @@
+.form-group {
+  display: block;
+}
+
+.form-group .label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-size: var(--fs--1);
+  font-weight: var(--fw-semibold);
+}
+
+.form-group input[type='text'],
+.form-group input[type='url'],
+.form-group textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.7em;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--c-gray-accent);
+  background-color: var(--c-gray);
+}

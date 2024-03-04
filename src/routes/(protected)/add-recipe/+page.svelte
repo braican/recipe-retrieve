@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { fly } from 'svelte/transition';
   import { enhance } from '$app/forms';
   import type { ActionResult } from '@sveltejs/kit';
   import type { SubmitFunction } from './$types.js';
-  import { BasicLink, Input, MultiInput, Toggle } from '$lib/ui';
+  import { BasicLink, Input, MultiInput, Toggle, AutoInput } from '$lib/ui';
   import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
 
   export let form;
@@ -14,12 +15,15 @@
   let recipe = '';
   let ingredients: string[] = [];
   let steps: string[] = [];
+  let featuredIngredients: string[] = [];
+  let tags: string[] = [];
 
   // Other state.
   let renderImage = '';
   let showManualInput = false;
   let recipeParsed = false;
   let error: string | null = null;
+  let loading = false;
 
   if (form?.error) {
     error = form.error;
@@ -35,7 +39,9 @@
   }
 
   $: formAction = showManualInput ? '?/submit' : '?/parse';
-  $: buttonText = showManualInput ? 'Add Recipe' : 'Parse Recipe';
+  $: buttonText = (() => {
+    return showManualInput ? 'Add Recipe' : 'Parse Recipe';
+  })();
 
   const setImage = async () => {
     if (image) {
@@ -48,7 +54,11 @@
   };
 
   const handleSubmit: SubmitFunction = () => {
+    loading = true;
+
     return async ({ result, update }: { result: ActionResult; update: Function }) => {
+      loading = false;
+
       if (result.status !== 400 && !showManualInput) {
         recipeParsed = true;
         showManualInput = true;
@@ -89,17 +99,23 @@
     <BasicLink href="/kitchen" icon={LeftArrowIcon}>Back</BasicLink>
   </header>
 
-  <form method="POST" class="add-recipe-form" use:enhance={handleSubmit}>
+  <form method="POST" class="add-recipe-form" use:enhance={handleSubmit} class:loading>
     {#if error}
       <p class="error mb-4">{error}</p>
     {/if}
 
-    <Input label="Title" name="title" placeholder="Chicken parmesan" bind:value={title} />
+    <Input
+      label="Title"
+      name="title"
+      placeholder="Chicken parmesan"
+      bind:value={title}
+      disabled={loading} />
     <Input
       label="Source"
       type="url"
       name="source"
       placeholder="https://seriouseats.com"
+      disabled={loading}
       bind:value={source} />
     <Input
       label="Image"
@@ -107,10 +123,22 @@
       name="image"
       placeholder="https://images.unsplash.com/photo"
       bind:value={image}
+      disabled={loading}
       on:blur={setImage} />
 
+    {featuredIngredients}
+
+    <div class="form-columns">
+      <AutoInput
+        bind:selected={featuredIngredients}
+        name="featuredIngredients"
+        label="Featured Ingredients"
+        options={[]} />
+      <AutoInput bind:selected={tags} label="Tags" name="tags" options={[]} />
+    </div>
+
     {#if !recipeParsed}
-      <Toggle label="Manual input" bind:status={showManualInput} />
+      <Toggle label="Manual input" bind:status={showManualInput} disabled={loading} />
     {/if}
 
     {#if showManualInput}
@@ -131,11 +159,17 @@
         type="textarea"
         name="recipe"
         placeholder="Paste recipe here"
+        disabled={loading}
         bind:value={recipe} />
     {/if}
 
-    <div class="mt-4">
-      <button class="button" type="submit" formaction={formAction}>{buttonText}</button>
+    <div class="mt-4 actions">
+      <button class="button submit-button" type="submit" formaction={formAction} class:loading
+        >{buttonText}</button>
+
+      {#if loading}
+        <span in:fly={{ y: 10, duration: 500, delay: 100 }} class="loader">Loading</span>
+      {/if}
     </div>
   </form>
 </article>
@@ -169,5 +203,56 @@
 
   .error {
     color: var(--c-alert-red);
+  }
+
+  .form-columns {
+    display: grid;
+    gap: 0 var(--sp-2);
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
+
+  .add-recipe-form.loading {
+    pointer-events: none;
+  }
+
+  .actions {
+    position: relative;
+  }
+
+  .submit-button.loading {
+    transition: all var(--transition);
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  .loader {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: var(--fw-semibold);
+  }
+  .loader:after {
+    content: '';
+    display: block;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: var(--c-dark);
+    animation: ballbns 0.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes ballbns {
+    0% {
+      left: 0;
+      transform: translateX(0%);
+    }
+    100% {
+      left: 100%;
+      transform: translateX(100%);
+    }
   }
 </style>

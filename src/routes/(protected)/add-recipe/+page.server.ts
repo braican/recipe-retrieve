@@ -125,6 +125,8 @@ export const actions = {
     const image = formData.get('image') as string;
     const ingredients = formData.getAll('ingredients[]') as string[];
     const steps = formData.getAll('steps[]') as string[];
+    const featuredIngredients = formData.getAll('featuredIngredients[]') as string[];
+    const tags = formData.getAll('tags[]') as string[];
 
     if (!title) {
       return fail(400, { error: 'You must provide a recipe title.' });
