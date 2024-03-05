@@ -1,0 +1,54 @@
+@import '_reset.css';
+@import '_spacing.css';
+@import '_layout.css';
+@import '_type.css';
+@import '_forms.css';
+@import '_page-transitions.css';
+
+:root {
+  /* Colors */
+  --c-white: #ffffff;
+  --c-primary: #f2483d;
+  --c-primary-light: #ff938d;
+  --c-primary-transparent: rgba(242, 72, 61, 0.1);
+  --c-primary-transparent-hover: rgba(242, 72, 61, 0.4);
+  --c-primary-dark: #aa0f07;
+  --c-secondary: #32d5c0;
+  --c-secondary-light: #88ecde;
+  --c-dark: #1f2d3f;
+  --c-dark-accent: #4c5c70;
+  --c-bg: #fbfdfa;
+  --c-gray: #f9f9f9;
+  --c-gray-accent: #e6e6e6;
+  --c-gray-dark: #999;
+  --c-light-text: var(--c-bg);
+  --c-alert-red: #ff0000;
+
+  /* Type */
+  --font-base: 'Manrope', sans-serif;
+  --fw-light: 300;
+  --fw-normal: 500;
+  --fw-semibold: 700;
+  --fw-bold: 800;
+
+  /* Type scale */
+  /* https://utopia.fyi/type/calculator/?c=360,16,1.25,1240,18,1.25,4,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+  --fs--2: clamp(0.64rem, 0.6073rem + 0.1455vi, 0.72rem);
+  --fs--1: clamp(0.8rem, 0.7591rem + 0.1818vi, 0.9rem);
+  --fs-0: clamp(1rem, 0.9489rem + 0.2273vi, 1.125rem);
+  --fs-1: clamp(1.25rem, 1.1861rem + 0.2841vi, 1.4063rem);
+  --fs-2: clamp(1.5625rem, 1.4826rem + 0.3551vi, 1.7578rem);
+  --fs-3: clamp(1.9531rem, 1.8532rem + 0.4439vi, 2.1973rem);
+  --fs-4: clamp(2.4414rem, 2.3166rem + 0.5549vi, 2.7466rem);
+
+  /* Spacing */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 1rem;
+  --sp-4: 2rem;
+
+  /*  */
+  --border-radius: 0.25rem;
+  --border-radius-max: 25%;
+  --transition: 0.15s ease-in-out;
+}

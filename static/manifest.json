@@ -1,0 +1,24 @@
+{
+  "short_name": "Recipe Retrieve",
+  "name": "Recipe Retrieve",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    }
+  ],
+  "background_color": "#1f2d3f",
+  "theme_color": "#f2483d",
+  "display": "standalone",
+  "scope": "/",
+  "description": "What's for dinner?"
+}

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+TIMESTAMP=$(date "+%Y-%m-%d-%H%M%S")
+FILENAME="backup-$TIMESTAMP.sql"
+supabase db dump -f db/backups/$FILENAME --data-only

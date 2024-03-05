@@ -4,12 +4,12 @@
 	"license": "MIT",
 	"author": "Nick Braica <nick.braica@gmail.com>",
 	"repository": {
-    "type": "git",
-    "url": "git@github.com:braican/recipe-retrieve.git"
-  },
-  "bugs": {
-    "url": "https://github.com/braican/recipe-retrieve/issues"
-  },
+		"type": "git",
+		"url": "git@github.com:braican/recipe-retrieve.git"
+	},
+	"bugs": {
+		"url": "https://github.com/braican/recipe-retrieve/issues"
+	},
 	"description": "Your recipe book.",
 	"scripts": {
 		"dev": "vite dev",
@@ -41,6 +41,8 @@
 	},
 	"dependencies": {
 		"@google/generative-ai": "^0.2.1",
+		"@supabase/ssr": "^0.1.0",
+		"@supabase/supabase-js": "^2.39.6",
 		"dotenv": "^16.4.4"
 	},
 	"type": "module"
