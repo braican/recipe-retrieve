@@ -4,6 +4,7 @@
   import type { ActionResult } from '@sveltejs/kit';
   import type { SubmitFunction } from './$types.js';
   import { BasicLink, Input, MultiInput, Toggle, AutoInput } from '$lib/ui';
+  import { BackgroundImage } from '$lib/components';
   import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
 
   export let form;
@@ -91,9 +92,7 @@
 
 <article class="trs-in-slideup">
   {#if renderImage}
-    <figure class="background-image">
-      <img src={renderImage} alt="recipe shot" />
-    </figure>
+    <BackgroundImage src={renderImage} alt="recipe shot" />
   {/if}
 
   <header class="mb-4">
@@ -174,32 +173,6 @@
 </article>
 
 <style>
-  .background-image {
-    width: 100vw;
-    height: 30vh;
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0;
-    z-index: -1;
-    display: block;
-    opacity: 0.5;
-  }
-  .background-image:after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 80%;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-  }
-  .background-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
   .error {
     color: var(--c-alert-red);
   }

@@ -59,6 +59,7 @@
 
   .masthead-title {
     flex: 1;
+    text-shadow: 1px 1px 1px var(--c-white);
   }
 
   .avatar {

@@ -1,20 +1,17 @@
 <script lang="ts">
   import { getMeal } from '$lib/utils';
+  import { RecipeCard } from '$lib/components';
 
   export let data;
 </script>
 
-<p>What's for {getMeal()}?</p>
+<p class="fs-2">What's for {getMeal()}?</p>
 
 {#if data.recipes}
-  <ul>
+  <ul class="list mt-4">
     {#each data.recipes as recipe}
       <li>
-        <article>
-          <header>
-            <h2><a href={`/recipe/${recipe.id}`}>{recipe.title}</a></h2>
-          </header>
-        </article>
+        <RecipeCard {recipe} />
       </li>
     {/each}
   </ul>
@@ -23,6 +20,11 @@
 <a class="button add-button" href="/add-recipe" aria-label="Add new recipe">+</a>
 
 <style>
+  .list {
+    display: grid;
+    gap: var(--sp-2);
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
   .add-button {
     position: fixed;
     bottom: var(--sp-2);
