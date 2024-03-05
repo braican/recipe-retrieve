@@ -7,6 +7,7 @@
   import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
 
   export let form;
+  export let data;
 
   // Form values.
   let title = '';
@@ -126,15 +127,13 @@
       disabled={loading}
       on:blur={setImage} />
 
-    {featuredIngredients}
-
     <div class="form-columns">
       <AutoInput
         bind:selected={featuredIngredients}
         name="featuredIngredients"
         label="Featured Ingredients"
-        options={[]} />
-      <AutoInput bind:selected={tags} label="Tags" name="tags" options={[]} />
+        options={data.ingredients} />
+      <AutoInput bind:selected={tags} label="Tags" name="tags" options={data.tags} />
     </div>
 
     {#if !recipeParsed}

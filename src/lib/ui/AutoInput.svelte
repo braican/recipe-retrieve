@@ -1,5 +1,7 @@
 <script lang="ts">
   import TrashIcon from '$lib/icons/trash.svg?raw';
+  import { clickOutside } from '$lib/utils/actions';
+
   export let label = '';
   export let name = '';
   export let options: string[] = [];
@@ -7,17 +9,24 @@
 
   let filteredOptions: string[] = [];
   let search = '';
+  let showCompletions = false;
+
+  const clear = () => {
+    search = '';
+    filteredOptions = [];
+    showCompletions = false;
+  };
 
   const handleInput = (event: Event) => {
     const target = event.target as HTMLInputElement;
     search = target.value;
     filteredOptions = options.filter(option => option.toLowerCase().includes(search.toLowerCase()));
+    showCompletions = search.length > 0 || (filteredOptions.length > 0 && search.length > 1);
   };
 
   const handleSelection = (option: string) => {
     selected = [...selected, option];
-    search = '';
-    filteredOptions = [];
+    clear();
   };
 
   const deleteSelection = (option: string) => {
@@ -32,11 +41,11 @@
 
   <input type="text" on:input={handleInput} value={search} />
 
-  {#if search || (filteredOptions.length > 0 && search.length > 1)}
-    <div class="completions">
+  {#if showCompletions}
+    <div class="completions" use:clickOutside={clear}>
       {#if search && !options.find(option => option.toLowerCase() === search.toLowerCase())}
         <button on:click={handleSelection.bind(null, search)} class="new-option" type="button"
-          >Add {search}</button>
+          >+ Add {search}</button>
       {/if}
 
       {#if filteredOptions.length > 0 && search.length > 1}
@@ -82,6 +91,7 @@
   .completions {
     position: absolute;
     left: 0;
+    margin-top: -1px;
     background-color: var(--c-white);
     border: 1px solid var(--c-gray-accent);
     z-index: 2;
@@ -99,7 +109,7 @@
     padding: var(--sp-2);
   }
   .new-option:hover,
-  .select-option:hover {
+  .select-option:hover:not(:disabled) {
     background-color: var(--c-gray);
   }
 

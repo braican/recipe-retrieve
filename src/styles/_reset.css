@@ -77,6 +77,9 @@ button {
   border-radius: unset;
   background-color: unset;
 }
+button:disabled {
+  cursor: default;
+}
 
 textarea:not([rows]) {
   min-height: 10em;

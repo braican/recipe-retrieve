@@ -90,6 +90,9 @@ alter table ingredients
 create policy "Ingredients are viewable by everyone." on ingredients
   for select using (true);
 
+create policy "Ingredients can be inserted by authenticated users only" on ingredients
+  for insert to authenticated with check (true);
+
 --
 -- Tags table.
 --
@@ -103,6 +106,9 @@ alter table tags
 
 create policy "Tags are viewable by everyone." on tags
   for select using (true);
+
+create policy "Tags can be inserted by authenticated users only" on tags
+  for insert to authenticated with check (true);
 
 
 --
@@ -120,6 +126,9 @@ alter table recipes_ingredients
 create policy "Recipe/ingredients joins are viewable by everyone." on recipes_ingredients
   for select using (true);
 
+create policy "Recipe/ingredients joins can be inserted by authenticated users only" on recipes_ingredients
+  for insert to authenticated with check (true);
+
 create table recipes_tags (
   recipe_id bigint references recipes(id),
   tag_id bigint references tags(id),
@@ -131,3 +140,6 @@ alter table recipes_tags
 
 create policy "Recipe/tags joins are viewable by everyone." on recipes_tags
   for select using (true);
+
+create policy "Recipe/tags joins can be inserted by authenticated users only" on recipes_tags
+  for insert to authenticated with check (true);

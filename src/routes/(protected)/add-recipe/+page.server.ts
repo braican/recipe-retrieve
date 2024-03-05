@@ -1,55 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GEMINI_AI_KEY } from '$env/static/private';
 import { fail, redirect } from '@sveltejs/kit';
-
-const prompt = `
-You are a helpful tool that can parse recipes from text and identify the ingredients and the steps present in the recipe. When presented with a recipe, you should return JSON consisting of three properties. The first should be of key "ingredients", which should be an array of strings representing the ingredients in the recipe along with their amounts. You should take this directly from the recipe input. The second should be key "steps", and this should be an array of strings representing the steps in the recipe. This should be taken directly from the recipe input with no changes. If you cannot parse the recipe because it has no ingredients or steps, simply return the number 0;
-
-Here's an example:
-
-RECIPE:
-
-1.5 lbs. baby yellow potatoes (or petite gold)
-Extra-virgin olive oil
-1 1/2 tsp. dried oregano
-1 tsp. garlic powder
-Kosher salt and black pepper
-1 small lemon (or 1/2 large), sliced into 1/4-inch thick rounds
-4 to 5 oz. feta cheese, cut or crumbled into chunks
-1/3 cup roughly chopped fresh dill
-
-Boil potatoes in a pot of generously salted water until fork-tender, about 10 to 15 minutes. Drain, and let cool slightly. Preheat oven to 450ºF.
-In a small bowl, combine 3 Tbsp. extra-virgin olive oil, oregano, garlic powder, 1/2 tsp. salt, and 1/2 tsp. black pepper; mix well.
-Transfer potatoes to a large rimmed baking sheet covered with parchment paper. Drizzle with half of the oil mixture and toss to coat. Using the bottom of a jar or glass, smash the potatoes until they are crushed. Nestle lemon slices in among the potatoes, and brush remaining oil mixture over lemons and potatoes. Roast for 30 minutes, until golden and crisp.
-Remove lemon slices from the pan, and let cool on a cutting board for just a few minutes. Use a sharp chefs knife to very finely mince the lemon, and add to a small bowl. Drizzle with 2 to 3 Tbsp. extra-virgin olive oil and a pinch of salt; mix well.
-Pour lemon dressing over potatoes and add feta; toss well. Transfer to a bowl, add fresh dill, and give it one more toss before serving warm. (I also like to garnish with extra cracked black pepper.)
-
-EXPECTED OUTPUT:
-
-{
-  "ingredients": [
-    "1.5 lbs. baby yellow potatoes (or petite gold)",
-    "Extra-virgin olive oil",
-    "1 1/2 tsp. dried oregano",
-    "1 tsp. garlic powder",
-    "Kosher salt and black pepper",
-    "1 small lemon (or 1/2 large), sliced into 1/4-inch thick rounds",
-    "4 to 5 oz. feta cheese, cut or crumbled into chunks",
-    "1/3 cup roughly chopped fresh dill"
-  ],
-  "steps": [
-    "Boil potatoes in a pot of generously salted water until fork-tender, about 10 to 15 minutes. Drain, and let cool slightly. Preheat oven to 450ºF.",
-    "In a small bowl, combine 3 Tbsp. extra-virgin olive oil, oregano, garlic powder, 1/2 tsp. salt, and 1/2 tsp. black pepper; mix well.",
-    "Transfer potatoes to a large rimmed baking sheet covered with parchment paper. Drizzle with half of the oil mixture and toss to coat. Using the bottom of a jar or glass, smash the potatoes until they are crushed. Nestle lemon slices in among the potatoes, and brush remaining oil mixture over lemons and potatoes. Roast for 30 minutes, until golden and crisp.",
-    "Remove lemon slices from the pan, and let cool on a cutting board for just a few minutes. Use a sharp chefs knife to very finely mince the lemon, and add to a small bowl. Drizzle with 2 to 3 Tbsp. extra-virgin olive oil and a pinch of salt; mix well.",
-    "Pour lemon dressing over potatoes and add feta; toss well. Transfer to a bowl, add fresh dill, and give it one more toss before serving warm. (I also like to garnish with extra cracked black pepper.)"
-  ]
-}
-
-Following these instructions, parse the ingredients from the recipe below:
-
-RECIPE:
-`;
+import { prompt, getRowByTitle } from '$lib/utils';
 
 const parseRecipe = async (recipe: string): Promise<string> => {
   const ai = new GoogleGenerativeAI(GEMINI_AI_KEY);
@@ -57,6 +9,18 @@ const parseRecipe = async (recipe: string): Promise<string> => {
   const result = await model.generateContent(`${prompt}\n${recipe}`);
   const response = await result.response;
   return response.text();
+};
+
+/** @type {import('./$types').PageServerLoad} */
+export const load = async ({ locals: { supabase } }) => {
+  const ingredients = await supabase.from('ingredients').select('title');
+  const tags = await supabase.from('tags').select('title');
+
+  return {
+    pageTitle: 'Add New Recipe',
+    ingredients: ingredients?.data?.map(ingredient => ingredient.title) ?? [],
+    tags: tags?.data?.map(tag => tag.title) ?? [],
+  };
 };
 
 /** @type {import('./$types').Actions} */
@@ -67,6 +31,7 @@ export const actions = {
     const source = data.get('source') as string;
     const image = data.get('image') as string;
     const recipe = data.get('recipe') as string;
+    const recipeData = { title, source, image };
 
     if (!recipe) {
       return fail(400, { error: 'No recipe was provided.' });
@@ -78,11 +43,7 @@ export const actions = {
         return {
           action: 'parse',
           error: 'There was a problem parsing your recipe. You can still add it manually.',
-          recipe: {
-            title,
-            source,
-            image,
-          },
+          recipe: recipeData,
         };
       }
 
@@ -90,9 +51,7 @@ export const actions = {
       return {
         action: 'parse',
         recipe: {
-          title,
-          source,
-          image,
+          ...recipeData,
           ...recipeJson,
         },
       };
@@ -151,6 +110,30 @@ export const actions = {
 
     if (error) {
       return fail(500, { error: error.message });
+    }
+
+    if (featuredIngredients.length > 0) {
+      featuredIngredients.forEach(async ingredient => {
+        const ingredientId = await getRowByTitle(supabase, 'ingredients', ingredient);
+        if (ingredientId) {
+          await supabase.from('recipes_ingredients').insert({
+            recipe_id: data.id,
+            ingredient_id: ingredientId,
+          });
+        }
+      });
+    }
+
+    if (tags.length > 0) {
+      tags.forEach(async tag => {
+        const tagId = await getRowByTitle(supabase, 'tags', tag);
+        if (tagId) {
+          await supabase.from('recipes_tags').insert({
+            recipe_id: data.id,
+            tag_id: tagId,
+          });
+        }
+      });
     }
 
     redirect(303, `/recipe/${data.id}`);
