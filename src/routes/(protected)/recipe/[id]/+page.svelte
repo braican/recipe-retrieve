@@ -60,7 +60,8 @@
   {/if}
 
   <header class="header" class:header-with-image={data.recipe.image_url}>
-    <a class="back-link mb-2" href="/" aria-label="Back to the kitchen">{@html LeftArrowIcon}</a>
+    <a class="back-link mb-2" href="/kitchen" aria-label="Back to the kitchen"
+      >{@html LeftArrowIcon}</a>
     <h1 class="fs-4 fw-bold title">
       {data.recipe.title}
 
