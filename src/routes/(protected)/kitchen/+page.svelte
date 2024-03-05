@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { getMeal } from '$lib/utils';
   import { RecipeCard } from '$lib/components';
 
   export let data;
 </script>
 
-<p class="fs-2">What's for {getMeal()}?</p>
+<p class="fs-2 fw-bold">What's for {data.meal}?</p>
 
 {#if data.recipes}
   <ul class="list mt-4">
