@@ -1,8 +1,24 @@
 <script lang="ts">
   import { getMeal } from '$lib/utils';
+
+  export let data;
 </script>
 
 <p>What's for {getMeal()}?</p>
+
+{#if data.recipes}
+  <ul>
+    {#each data.recipes as recipe}
+      <li>
+        <article>
+          <header>
+            <h2><a href={`/recipe/${recipe.id}`}>{recipe.title}</a></h2>
+          </header>
+        </article>
+      </li>
+    {/each}
+  </ul>
+{/if}
 
 <a class="button add-button" href="/add-recipe" aria-label="Add new recipe">+</a>
 
