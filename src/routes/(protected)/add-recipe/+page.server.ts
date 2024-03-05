@@ -1,7 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GEMINI_AI_KEY } from '$env/static/private';
 import { fail, redirect } from '@sveltejs/kit';
-import { prompt, getRowByTitle } from '$lib/utils';
+import { prompt, updateRecipeRelations } from '$lib/utils';
+import type { Term } from '$userTypes';
 
 const parseRecipe = async (recipe: string): Promise<string> => {
   const ai = new GoogleGenerativeAI(GEMINI_AI_KEY);
@@ -13,13 +14,13 @@ const parseRecipe = async (recipe: string): Promise<string> => {
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ locals: { supabase } }) => {
-  const ingredients = await supabase.from('ingredients').select('title');
-  const tags = await supabase.from('tags').select('title');
+  const ingredients = await supabase.from('ingredients').select().returns<Term[]>();
+  const tags = await supabase.from('tags').select().returns<Term[]>();
 
   return {
     pageTitle: 'Add New Recipe',
-    ingredients: ingredients?.data?.map(ingredient => ingredient.title) ?? [],
-    tags: tags?.data?.map(tag => tag.title) ?? [],
+    ingredients: ingredients?.data ?? [],
+    tags: tags?.data ?? [],
   };
 };
 
@@ -95,7 +96,7 @@ export const actions = {
       return fail(400, { error: 'Your recipe must include at least one ingredient and one step.' });
     }
 
-    const { data, error } = await supabase
+    const { data: recipe, error } = await supabase
       .from('recipes')
       .insert({
         user_id: session.user.id,
@@ -112,30 +113,16 @@ export const actions = {
       return fail(500, { error: error.message });
     }
 
-    if (featuredIngredients.length > 0) {
-      featuredIngredients.forEach(async ingredient => {
-        const ingredientId = await getRowByTitle(supabase, 'ingredients', ingredient);
-        if (ingredientId) {
-          await supabase.from('recipes_ingredients').insert({
-            recipe_id: data.id,
-            ingredient_id: ingredientId,
-          });
-        }
-      });
-    }
+    await updateRecipeRelations(
+      supabase,
+      recipe.id,
+      featuredIngredients,
+      'ingredients',
+      'recipes_ingredients',
+      'ingredient_id',
+    );
+    await updateRecipeRelations(supabase, recipe.id, tags, 'tags', 'recipes_tags', 'tag_id');
 
-    if (tags.length > 0) {
-      tags.forEach(async tag => {
-        const tagId = await getRowByTitle(supabase, 'tags', tag);
-        if (tagId) {
-          await supabase.from('recipes_tags').insert({
-            recipe_id: data.id,
-            tag_id: tagId,
-          });
-        }
-      });
-    }
-
-    redirect(303, `/recipe/${data.id}`);
+    redirect(303, `/recipe/${recipe.id}`);
   },
 };

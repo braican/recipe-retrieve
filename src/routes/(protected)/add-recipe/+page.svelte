@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
   import { enhance } from '$app/forms';
-  import type { ActionResult } from '@sveltejs/kit';
-  import type { SubmitFunction } from './$types.js';
   import { BasicLink, Input, MultiInput, Toggle, AutoInput } from '$lib/ui';
-  import { BackgroundImage } from '$lib/components';
+  import { BackgroundImage, StatefulSubmit } from '$lib/components';
   import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
+  import type { ActionResult } from '@sveltejs/kit';
+  import type { SubmitFunction } from './$types';
 
   export let form;
   export let data;
@@ -99,7 +98,12 @@
     <BasicLink href="/kitchen" icon={LeftArrowIcon}>Back</BasicLink>
   </header>
 
-  <form method="POST" class="add-recipe-form" use:enhance={handleSubmit} class:loading>
+  <form
+    method="POST"
+    class="add-recipe-form"
+    action={formAction}
+    use:enhance={handleSubmit}
+    class:loading>
     {#if error}
       <p class="error mb-4">{error}</p>
     {/if}
@@ -162,12 +166,7 @@
     {/if}
 
     <div class="mt-4 actions">
-      <button class="button submit-button" type="submit" formaction={formAction} class:loading
-        >{buttonText}</button>
-
-      {#if loading}
-        <span in:fly={{ y: 10, duration: 500, delay: 100 }} class="loader">Loading</span>
-      {/if}
+      <StatefulSubmit {loading} {buttonText} />
     </div>
   </form>
 </article>
@@ -176,55 +175,10 @@
   .error {
     color: var(--c-alert-red);
   }
-
-  .form-columns {
-    display: grid;
-    gap: 0 var(--sp-2);
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-  }
-
   .add-recipe-form.loading {
     pointer-events: none;
   }
-
   .actions {
     position: relative;
-  }
-
-  .submit-button.loading {
-    transition: all var(--transition);
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  .loader {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-2);
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    font-weight: var(--fw-semibold);
-  }
-  .loader:after {
-    content: '';
-    display: block;
-    height: 8px;
-    width: 8px;
-    border-radius: 50%;
-    background-color: var(--c-dark);
-    animation: ballbns 0.5s ease-in-out infinite alternate;
-  }
-
-  @keyframes ballbns {
-    0% {
-      left: 0;
-      transform: translateX(0%);
-    }
-    100% {
-      left: 100%;
-      transform: translateX(100%);
-    }
   }
 </style>

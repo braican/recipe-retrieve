@@ -138,6 +138,9 @@ create policy "Recipe/ingredients joins can be inserted by authenticated users o
 create policy "Recipe/ingredients joins can be deleted by authenticated users" ON recipes_ingredients
   as permissive for delete to authenticated using (true);
 
+create policy "Recipe/ingredients joins can be updated by authenticated users" on recipes_ingredients
+  as permissive for update to authenticated using (true);
+
 create table recipes_tags (
   recipe_id bigint references recipes(id),
   tag_id bigint references tags(id),
@@ -155,3 +158,6 @@ create policy "Recipe/tags joins can be inserted by authenticated users only" on
 
 create policy "Recipe/tags joins can be deleted by authenticated users" ON recipes_tags
   as permissive for delete to authenticated using (true);
+
+create policy "Recipe/tags joins can be updated by authenticated users" on recipes_tags
+  as permissive for update to authenticated using (true);

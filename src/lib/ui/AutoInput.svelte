@@ -1,13 +1,13 @@
 <script lang="ts">
-  import TrashIcon from '$lib/icons/trash.svg?raw';
   import { clickOutside } from '$lib/utils/actions';
+  import { PillList } from '$lib/components';
+  import type { Term } from '$userTypes';
 
   export let label = '';
   export let name = '';
-  export let options: string[] = [];
-  export let selected: string[] = [];
-
-  let filteredOptions: string[] = [];
+  export let options: Term[] = [];
+  export let selected: Term[] = [];
+  let filteredOptions: Term[] = [];
   let search = '';
   let showCompletions = false;
 
@@ -20,17 +20,15 @@
   const handleInput = (event: Event) => {
     const target = event.target as HTMLInputElement;
     search = target.value;
-    filteredOptions = options.filter(option => option.toLowerCase().includes(search.toLowerCase()));
+    filteredOptions = options.filter(option =>
+      option.title.toLowerCase().includes(search.toLowerCase()),
+    );
     showCompletions = search.length > 0 || (filteredOptions.length > 0 && search.length > 1);
   };
 
-  const handleSelection = (option: string) => {
-    selected = [...selected, option];
+  const handleSelection = (term: Term) => {
+    selected = [...selected, term];
     clear();
-  };
-
-  const deleteSelection = (option: string) => {
-    selected = selected.filter(s => s !== option);
   };
 </script>
 
@@ -43,9 +41,11 @@
 
   {#if showCompletions}
     <div class="completions" use:clickOutside={clear}>
-      {#if search && !options.find(option => option.toLowerCase() === search.toLowerCase())}
-        <button on:click={handleSelection.bind(null, search)} class="new-option" type="button"
-          >+ Add {search}</button>
+      {#if search && !options.find(option => option.title.toLowerCase() === search.toLowerCase())}
+        <button
+          on:click={handleSelection.bind(null, { title: search })}
+          class="new-option"
+          type="button">+ Add {search}</button>
       {/if}
 
       {#if filteredOptions.length > 0 && search.length > 1}
@@ -56,8 +56,9 @@
                 on:click={handleSelection.bind(null, option)}
                 class="select-option"
                 type="button"
-                aria-label={`Choose ${option}`}
-                disabled={selected.includes(option)}>{option}</button>
+                aria-label={`Choose ${option.title}`}
+                disabled={selected.some(item => item.title === option.title)}
+                >{option.title}</button>
             </li>
           {/each}
         </ul>
@@ -66,20 +67,7 @@
   {/if}
 
   {#if selected.length}
-    <ul class="selecteds">
-      {#each selected as option}
-        <li>
-          <input type="hidden" value={option} name={`${name}[]`} />
-          <span class="pill">
-            <span>{option}</span>
-            <button
-              class="remove-selected"
-              aria-label={`Delete ${option}`}
-              on:click={deleteSelection.bind(null, option)}>{@html TrashIcon}</button>
-          </span>
-        </li>
-      {/each}
-    </ul>
+    <PillList pills={selected} {name} canDelete />
   {/if}
 </div>
 
@@ -111,24 +99,5 @@
   .new-option:hover,
   .select-option:hover:not(:disabled) {
     background-color: var(--c-gray);
-  }
-
-  .pill {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-1);
-  }
-
-  .remove-selected :global(svg) {
-    width: 14px;
-    display: block;
-    height: auto;
-  }
-
-  .selecteds {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-1);
-    margin-top: var(--sp-1);
   }
 </style>
