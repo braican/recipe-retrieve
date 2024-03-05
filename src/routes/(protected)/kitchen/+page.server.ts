@@ -1,5 +1,4 @@
 import type { Recipe } from '$userTypes';
-import { getMeal } from '$lib/utils';
 
 export const load = async ({ locals: { supabase } }) => {
   const { data: recipes, error } = await supabase.from('recipes').select().returns<Recipe[]>();
@@ -11,6 +10,5 @@ export const load = async ({ locals: { supabase } }) => {
   return {
     pageTitle: 'The Kitchen',
     recipes: recipes || [],
-    meal: getMeal(),
   };
 };
