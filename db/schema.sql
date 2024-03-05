@@ -93,6 +93,9 @@ create policy "Ingredients are viewable by everyone." on ingredients
 create policy "Ingredients can be inserted by authenticated users only" on ingredients
   for insert to authenticated with check (true);
 
+create policy "Ingredients can be updated by authenticated users only" on ingredients
+  for update to authenticated with check (true);
+
 --
 -- Tags table.
 --
@@ -109,6 +112,9 @@ create policy "Tags are viewable by everyone." on tags
 
 create policy "Tags can be inserted by authenticated users only" on tags
   for insert to authenticated with check (true);
+
+create policy "Tags can be updated by authenticated users only" on tags
+  for update to authenticated with check (true);
 
 
 --
@@ -129,6 +135,9 @@ create policy "Recipe/ingredients joins are viewable by everyone." on recipes_in
 create policy "Recipe/ingredients joins can be inserted by authenticated users only" on recipes_ingredients
   for insert to authenticated with check (true);
 
+create policy "Recipe/ingredients joins can be deleted by authenticated users" ON recipes_ingredients
+  as permissive for delete to authenticated using (true);
+
 create table recipes_tags (
   recipe_id bigint references recipes(id),
   tag_id bigint references tags(id),
@@ -143,3 +152,6 @@ create policy "Recipe/tags joins are viewable by everyone." on recipes_tags
 
 create policy "Recipe/tags joins can be inserted by authenticated users only" on recipes_tags
   for insert to authenticated with check (true);
+
+create policy "Recipe/tags joins can be deleted by authenticated users" ON recipes_tags
+  as permissive for delete to authenticated using (true);
