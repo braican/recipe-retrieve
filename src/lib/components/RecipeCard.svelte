@@ -22,6 +22,7 @@
     border-radius: var(--border-radius);
     border: 1px solid var(--c-gray-accent);
     overflow: hidden;
+    background-color: var(--c-gray);
   }
   .image {
     height: 0;

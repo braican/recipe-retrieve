@@ -50,7 +50,7 @@
   };
 </script>
 
-<article>
+<article class="recipe">
   {#if data.recipe.image_url}
     <BackgroundImage
       src={data.recipe.image_url}
@@ -135,6 +135,10 @@
 </article>
 
 <style>
+  .recipe {
+    padding-bottom: var(--sp-5);
+  }
+
   .header-with-image {
     margin-top: 5vh;
   }
