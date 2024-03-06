@@ -118,7 +118,7 @@
     </section>
 
     <section class="mt-4 steps">
-      <StepsList steps={data.recipe.steps} />
+      <StepsList steps={data.recipe.steps} recipe={data.recipe} />
     </section>
   </div>
 </article>

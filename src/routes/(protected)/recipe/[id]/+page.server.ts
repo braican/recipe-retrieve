@@ -62,4 +62,22 @@ export const actions = {
       return fail(500, { error: updateError.message });
     }
   },
+  updateSteps: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const recipeId = formData.get('recipeId') as string;
+    const steps = formData.getAll('steps[]') as string[];
+
+    if (!recipeId) {
+      return fail(400, { error: 'You must provide a recipe ID.' });
+    }
+
+    const { error: updateError } = await supabase
+      .from('recipes')
+      .update({ steps })
+      .eq('id', recipeId);
+
+    if (updateError) {
+      return fail(500, { error: updateError.message });
+    }
+  },
 };
