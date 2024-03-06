@@ -3,10 +3,11 @@
   import PencilIcon from '$lib/icons/pencil.svg?raw';
   import { enhance } from '$app/forms';
   import { BackgroundImage, Icon, PillList, StatefulSubmit } from '$lib/components';
+  import { IngredientList, StepsList } from '$lib/components/recipe';
   import { AutoInput } from '$lib/ui';
   import { authStore } from '$lib/stores';
   import type { Term } from '$userTypes';
-  import type { SubmitFunction } from './$types';
+  import type { SubmitFunction } from '@sveltejs/kit';
 
   export let data;
   const { session, supabase } = authStore;
@@ -113,23 +114,11 @@
 
   <div class="recipe-instructions">
     <section class="mt-4 ingredients">
-      <h2 class="mb-3 fw-bold">Ingredients</h2>
-
-      <ul class="unordered-list">
-        {#each data.recipe.ingredients as ingredient}
-          <li>{ingredient}</li>
-        {/each}
-      </ul>
+      <IngredientList ingredients={data.recipe.ingredients} recipe={data.recipe} />
     </section>
 
     <section class="mt-4 steps">
-      <h2 class="mb-3 fw-bold">Steps</h2>
-
-      <ol class="number-list">
-        {#each data.recipe.steps as step}
-          <li class="fs-1">{step}</li>
-        {/each}
-      </ol>
+      <StepsList steps={data.recipe.steps} />
     </section>
   </div>
 </article>
@@ -143,20 +132,21 @@
     margin-top: 5vh;
   }
 
-  .edit-recipe {
+  :global(.edit-recipe) {
     transition: color var(--transition);
     width: 40px;
     vertical-align: middle;
     padding: var(--sp-2);
   }
 
+  :global(.edit-recipe:hover) {
+    color: var(--c-primary-dark);
+  }
+
   .form-columns {
     gap: var(--sp-4);
   }
 
-  .edit-recipe:hover {
-    color: var(--c-primary-dark);
-  }
   .recipe-instructions {
     display: flex;
     flex-wrap: wrap;
