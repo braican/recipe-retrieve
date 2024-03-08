@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { invalidate, onNavigate } from '$app/navigation';
-  import { Masthead } from '$lib/components';
+  import { Masthead, Footer } from '$lib/components';
   import { authStore } from '$lib/stores';
   import '../styles/app.css';
 
@@ -47,7 +47,23 @@
 <div class="app">
   <Masthead />
 
-  <main class="p-2">
+  <main class="p-2 app-content">
     <slot />
   </main>
+
+  {#if !$page.route.id?.startsWith('/(protected)')}
+    <Footer />
+  {/if}
 </div>
+
+<style>
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-content {
+    flex: 1;
+  }
+</style>
