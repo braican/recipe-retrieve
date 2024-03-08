@@ -17,7 +17,10 @@
 
 {#if $user}
   <div>
-    <form method="post" action="?/update" use:enhance={handleSubmit}>
+    <form method="POST" action="/auth/logout">
+      <button class="button" type="submit">Log out</button>
+    </form>
+    <form method="post" action="?/update">
       <div>
         <label for="email">Email</label>
         <input id="email" type="text" value={$user.email} disabled />
