@@ -12,8 +12,11 @@
   const { session, supabase } = authStore;
 
   let loading = false;
-  let featuredIngredientList: Term[] = [];
-  let tagList: Term[] = [];
+  let dbIngredients: Term[] = [];
+  let dbTags: Term[] = [];
+  let featuredIngredients: Term[] =
+    data.recipe.terms?.filter(({ taxonomy }) => taxonomy === 'Ingredients') ?? [];
+  let tags: Term[] = data.recipe.terms?.filter(({ taxonomy }) => taxonomy === 'Tags') ?? [];
   let newFeaturedIngredients: Term[] = [];
   let newTags: Term[] = [];
 
@@ -21,15 +24,13 @@
 
   const engageEditMode = async () => {
     editMode = true;
+    newFeaturedIngredients = featuredIngredients;
+    newTags = tags;
 
-    newFeaturedIngredients = data.recipe.featuredIngredients || [];
-    newTags = data.recipe.tags || [];
-
-    if ($supabase && featuredIngredientList.length === 0) {
-      const dbIngredients = await $supabase.from('ingredients').select().returns<Term[]>();
-      const dbTags = await $supabase.from('tags').select().returns<Term[]>();
-      featuredIngredientList = dbIngredients?.data ?? [];
-      tagList = dbTags?.data ?? [];
+    if ($supabase && dbIngredients.length === 0 && dbTags.length === 0) {
+      const terms = await $supabase.from('terms').select().in('taxonomy', [1, 2]).returns<Term[]>();
+      dbIngredients = terms?.data?.filter(({ taxonomy }) => taxonomy === 1) ?? [];
+      dbTags = terms?.data?.filter(({ taxonomy }) => taxonomy === 2) ?? [];
     }
   };
 
@@ -38,8 +39,8 @@
     return async () => {
       editMode = false;
       loading = false;
-      data.recipe.featuredIngredients = newFeaturedIngredients;
-      data.recipe.tags = newTags;
+      featuredIngredients = newFeaturedIngredients;
+      tags = newTags;
     };
   };
 
@@ -85,8 +86,8 @@
           bind:selected={newFeaturedIngredients}
           name="featuredIngredients"
           label="Featured Ingredients"
-          options={featuredIngredientList} />
-        <AutoInput bind:selected={newTags} label="Tags" name="tags" options={tagList} />
+          options={dbIngredients} />
+        <AutoInput bind:selected={newTags} label="Tags" name="tags" options={dbTags} />
       </div>
 
       <input type="hidden" name="recipeId" value={data.recipe.id} />
@@ -98,14 +99,14 @@
     </form>
   {:else}
     <div class="form-columns mt-4">
-      {#if data.recipe.featuredIngredients && data.recipe.featuredIngredients.length > 0}
+      {#if featuredIngredients.length > 0}
         <div>
-          <PillList pills={data.recipe.featuredIngredients} title="Featured Ingredients" />
+          <PillList pills={featuredIngredients} title="Featured Ingredients" />
         </div>
       {/if}
-      {#if data.recipe.tags && data.recipe.tags.length > 0}
+      {#if tags.length > 0}
         <div>
-          <PillList pills={data.recipe.tags} title="Tags" />
+          <PillList pills={tags} title="Tags" />
         </div>
       {/if}
     </div>

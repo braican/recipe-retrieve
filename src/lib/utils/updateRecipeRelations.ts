@@ -1,36 +1,36 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Term } from '$userTypes';
+import type { RecipeTermJoin } from '$userTypes';
 
 export const updateRecipeRelations = async (
   supabase: SupabaseClient,
   recipeId: number | string,
-  formValues: string[],
-  termTable: string,
-  joinTable: string,
-  columnName: string,
+  formValues: {
+    taxonomy: number;
+    term: string;
+  }[],
 ) => {
   const { data: dbRels } = await supabase
-    .from(joinTable)
-    .select(columnName)
+    .from('recipes_terms')
+    .select('term_id')
     .eq('recipe_id', recipeId)
-    .returns<Term[]>();
+    .returns<RecipeTermJoin[]>();
 
-  const oldRels = dbRels?.map(rel => rel[columnName]) ?? [];
+  const oldRels = dbRels?.map(rel => rel.term_id) ?? [];
   const newRels = await Promise.all(
     formValues
-      .map(async itemId => {
-        if (/^-?\d+$/.test(itemId)) {
-          return parseInt(itemId);
+      .map(async ({ taxonomy, term }) => {
+        if (/^-?\d+$/.test(term)) {
+          return parseInt(term);
         }
 
-        const { data: newItem } = await supabase
-          .from(termTable)
-          .insert({ title: itemId })
+        const { data: newTerm } = await supabase
+          .from('terms')
+          .insert({ title: term, taxonomy })
           .select()
           .single();
 
-        if (newItem?.id) {
-          return newItem.id;
+        if (newTerm?.id) {
+          return newTerm.id;
         }
 
         return null;
@@ -42,12 +42,12 @@ export const updateRecipeRelations = async (
   const toAdd = newRels.filter(id => !oldRels.includes(id));
 
   if (toRemove.length > 0) {
-    await supabase.from(joinTable).delete().in(columnName, toRemove);
+    await supabase.from('recipes_terms').delete().in('term_id', toRemove);
   }
 
   if (toAdd.length > 0) {
     await supabase
-      .from(joinTable)
-      .insert(toAdd.map(itemId => ({ recipe_id: recipeId, [columnName]: itemId })));
+      .from('recipes_terms')
+      .insert(toAdd.map(itemId => ({ recipe_id: recipeId, term_id: itemId })));
   }
 };
