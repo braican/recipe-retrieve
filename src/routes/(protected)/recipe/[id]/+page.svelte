@@ -162,6 +162,7 @@
 
   .ingredients {
     flex: 0 1 auto;
+    max-width: 312px;
   }
   .steps {
     flex: 1 1 60%;
