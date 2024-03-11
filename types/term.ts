@@ -1,5 +1,5 @@
 export interface Term {
-  id: number;
+  id?: number;
   title: string;
   taxonomy?: number;
 }
