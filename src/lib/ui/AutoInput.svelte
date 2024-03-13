@@ -67,7 +67,7 @@
   {/if}
 
   {#if selected.length}
-    <PillList pills={selected} {name} canDelete />
+    <PillList bind:pills={selected} {name} canDelete />
   {/if}
 </div>
 

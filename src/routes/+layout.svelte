@@ -61,6 +61,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-bottom: var(--sp-4);
   }
 
   .app-content {

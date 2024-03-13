@@ -8,6 +8,5 @@ export interface Recipe {
   ingredients: string[];
   steps: string[];
   user_id: string;
-  featuredIngredients?: Term[];
-  tags?: Term[];
+  terms?: Term[];
 }
