@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { dndzone } from 'svelte-dnd-action';
   import TrashIcon from '$lib/icons/trash.svg?raw';
+  import type { Item, TransformDraggedElementFunction } from 'svelte-dnd-action';
 
   let itemList: HTMLTextAreaElement[] | HTMLInputElement[] = [];
 
@@ -10,48 +12,7 @@
   export let addMore = '';
 
   export let values: string[] = [];
-
-  let mouseYCoordinate: number | null = null; // pointer y coordinate within client
-  let distanceTopGrabbedVsPointer: number = 0;
-  let draggingItem: string | null = null;
-  let draggingItemIndex: number | null = null;
-  let hoveredItemIndex: number | null = null;
-
-  $: {
-    if (
-      draggingItemIndex !== null &&
-      hoveredItemIndex !== null &&
-      draggingItemIndex !== hoveredItemIndex
-    ) {
-      [values[draggingItemIndex], values[hoveredItemIndex]] = [
-        values[hoveredItemIndex],
-        values[draggingItemIndex],
-      ];
-
-      draggingItemIndex = hoveredItemIndex;
-    }
-  }
-
-  const handleDragstart = (event: DragEvent, item: string, index: number) => {
-    mouseYCoordinate = event.clientY;
-    draggingItemIndex = index;
-    draggingItem = item;
-    distanceTopGrabbedVsPointer = (event?.target as HTMLElement).offsetTop - event.clientY;
-  };
-
-  const handleDrag = (event: DragEvent) => {
-    mouseYCoordinate = event.clientY;
-  };
-
-  const handleDrop = (index: number) => {
-    hoveredItemIndex = index;
-  };
-
-  const handleDragend = () => {
-    draggingItem = null;
-    hoveredItemIndex = null;
-    distanceTopGrabbedVsPointer = 0;
-  };
+  let mappedValues: Item[] = values.map((text, id) => ({ id, text }));
 
   const addValue = () => {
     values = [...values.filter(x => x), ''];
@@ -59,6 +20,18 @@
 
   const focusOnInput = (node: HTMLInputElement | HTMLTextAreaElement) => {
     node.focus();
+  };
+
+  const handleSort = (event: CustomEvent) => {
+    mappedValues = event.detail.items;
+    values = mappedValues.map(({ text }) => text);
+  };
+
+  const transformDraggedElement: TransformDraggedElementFunction = (
+    element: HTMLElement | undefined,
+    draggedElementData: Item | undefined,
+  ): void => {
+    if (element) element.innerHTML = draggedElementData?.text;
   };
 </script>
 
@@ -68,47 +41,38 @@
   {/if}
 
   {#if values.length > 0}
-    {#if mouseYCoordinate && draggingItem}
-      <div class="item ghost" style="top: {mouseYCoordinate + distanceTopGrabbedVsPointer}px;">
-        {draggingItem}
-      </div>
-    {/if}
-    <ul class="mb-2">
-      {#each values as value, i}
-        <li
-          class="mb-1 item"
-          class:invisible={draggingItem === value}
-          draggable={true}
-          on:dragstart={event => handleDragstart(event, value, i)}
-          on:drag={handleDrag}
-          on:drop={() => handleDrop(i)}
-          on:dragover|preventDefault={() => handleDrop(i)}
-          on:dragend={handleDragend}>
+    <div
+      class="mb-2"
+      use:dndzone={{ items: mappedValues, dropTargetStyle: {}, transformDraggedElement }}
+      on:consider={handleSort}
+      on:finalize={handleSort}>
+      {#each mappedValues as value (value.id)}
+        <div class="mb-1 item input-item">
           <button
             type="button"
             class="remove"
-            on:click={() => (values = values.filter((x, j) => i !== j))}
+            on:click={() => (values = values.filter((x, j) => value.id !== j))}
             aria-label="Remove ingredient">
             {@html TrashIcon}
           </button>
           {#if type === 'textarea'}
             <textarea
               {name}
-              bind:value={values[i]}
               rows="2"
-              bind:this={itemList[i]}
+              bind:value={value.text}
+              bind:this={itemList[value.id]}
               use:focusOnInput></textarea>
           {:else}
             <input
               {name}
               type="text"
-              bind:value={values[i]}
-              bind:this={itemList[i]}
+              bind:value={value.text}
+              bind:this={itemList[value.id]}
               use:focusOnInput />
           {/if}
-        </li>
+        </div>
       {/each}
-    </ul>
+    </div>
   {/if}
 
   <div class="align-right">
@@ -152,7 +116,7 @@
     height: 20px;
     display: block;
     margin-right: var(--sp-2);
-    cursor: move;
+    cursor: grab;
   }
 
   .remove {
@@ -168,17 +132,5 @@
 
   .remove:hover {
     color: var(--c-gray-dark);
-  }
-
-  .ghost {
-    margin-bottom: 10px;
-    pointer-events: none;
-    z-index: 99;
-    position: absolute;
-    left: var(--sp-3);
-  }
-
-  .invisible {
-    opacity: 0;
   }
 </style>
