@@ -36,8 +36,7 @@
     mouseYCoordinate = event.clientY;
     draggingItemIndex = index;
     draggingItem = item;
-    distanceTopGrabbedVsPointer =
-      (event?.target as HTMLElement).getBoundingClientRect().y - event.clientY;
+    distanceTopGrabbedVsPointer = (event?.target as HTMLElement).offsetTop - event.clientY;
   };
 
   const handleDrag = (event: DragEvent) => {
@@ -121,6 +120,7 @@
 <style>
   .group {
     display: block;
+    position: relative;
   }
 
   .label {
@@ -144,6 +144,16 @@
     display: flex;
     align-items: center;
   }
+  .item:not(.ghost):before {
+    content: '';
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMTAyIDYwYTEwIDEwIDAgMSAxLTEwLTEwYTEwIDEwIDAgMCAxIDEwIDEwbTYyIDEwYTEwIDEwIDAgMSAwLTEwLTEwYTEwIDEwIDAgMCAwIDEwIDEwbS03MiA0OGExMCAxMCAwIDEgMCAxMCAxMGExMCAxMCAwIDAgMC0xMC0xMG03MiAwYTEwIDEwIDAgMSAwIDEwIDEwYTEwIDEwIDAgMCAwLTEwLTEwbS03MiA2OGExMCAxMCAwIDEgMCAxMCAxMGExMCAxMCAwIDAgMC0xMC0xMG03MiAwYTEwIDEwIDAgMSAwIDEwIDEwYTEwIDEwIDAgMCAwLTEwLTEwIi8+PC9zdmc+);
+    background-size: 20px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin-right: var(--sp-2);
+    cursor: move;
+  }
 
   .remove {
     transition: color var(--transition);
@@ -165,8 +175,7 @@
     pointer-events: none;
     z-index: 99;
     position: absolute;
-    top: 0;
-    left: 10;
+    left: var(--sp-3);
   }
 
   .invisible {
