@@ -8,7 +8,7 @@
   export let canDelete = false;
 
   const deleteSelection = (term: Term) => {
-    pills = pills.filter(s => s !== term);
+    pills = pills.filter(s => s.title !== term.title);
   };
 </script>
 

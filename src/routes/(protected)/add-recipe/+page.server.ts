@@ -14,13 +14,14 @@ const parseRecipe = async (recipe: string): Promise<string> => {
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ locals: { supabase } }) => {
-  const ingredients = await supabase.from('ingredients').select().returns<Term[]>();
-  const tags = await supabase.from('tags').select().returns<Term[]>();
+  const terms = await supabase.from('terms').select().in('taxonomy', [1, 2]).returns<Term[]>();
+  const ingredients = terms?.data?.filter(({ taxonomy }) => taxonomy === 1) ?? [];
+  const tags = terms?.data?.filter(({ taxonomy }) => taxonomy === 2) ?? [];
 
   return {
     pageTitle: 'Add New Recipe',
-    ingredients: ingredients?.data ?? [],
-    tags: tags?.data ?? [],
+    ingredients,
+    tags,
   };
 };
 
@@ -113,15 +114,10 @@ export const actions = {
       return fail(500, { error: error.message });
     }
 
-    await updateRecipeRelations(
-      supabase,
-      recipe.id,
-      featuredIngredients,
-      'ingredients',
-      'recipes_ingredients',
-      'ingredient_id',
-    );
-    await updateRecipeRelations(supabase, recipe.id, tags, 'tags', 'recipes_tags', 'tag_id');
+    await updateRecipeRelations(supabase, recipe.id, [
+      ...featuredIngredients.map(term => ({ taxonomy: 1, term })),
+      ...tags.map(term => ({ taxonomy: 2, term })),
+    ]);
 
     redirect(303, `/recipe/${recipe.id}`);
   },

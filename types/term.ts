@@ -1,4 +1,5 @@
-export interface term {
-  id: number;
+export interface Term {
+  id?: number;
   title: string;
+  taxonomy?: number;
 }

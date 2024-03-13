@@ -5,6 +5,7 @@
   import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
   import type { ActionResult } from '@sveltejs/kit';
   import type { SubmitFunction } from './$types';
+  import type { Term } from '$userTypes';
 
   export let form;
   export let data;
@@ -16,8 +17,8 @@
   let recipe = '';
   let ingredients: string[] = [];
   let steps: string[] = [];
-  let featuredIngredients: string[] = [];
-  let tags: string[] = [];
+  let featuredIngredients: Term[] = [];
+  let tags: Term[] = [];
 
   // Other state.
   let renderImage = '';
