@@ -6,11 +6,7 @@ import type { Recipe } from '$userTypes';
 export const load = async ({ params, locals: { supabase } }) => {
   const { data: recipe } = await supabase
     .from('recipes')
-    .select(
-      `id, user_id, title, source_url, image_url, ingredients, steps,
-      featuredIngredients:ingredients(id, title),
-      tags(id, title)`,
-    )
+    .select('*, terms(id, title, ...taxonomies(taxonomy:title))')
     .eq('id', params.id)
     .returns<Recipe>()
     .single();
@@ -33,15 +29,45 @@ export const actions = {
       return fail(400, { error: 'You must provide a recipe ID.' });
     }
 
-    await updateRecipeRelations(
-      supabase,
-      recipeId,
-      featuredIngredients,
-      'ingredients',
-      'recipes_ingredients',
-      'ingredient_id',
-    );
+    await updateRecipeRelations(supabase, recipeId, [
+      ...featuredIngredients.map(term => ({ taxonomy: 1, term })),
+      ...tags.map(term => ({ taxonomy: 2, term })),
+    ]);
+  },
+  updateIngredients: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const recipeId = formData.get('recipeId') as string;
+    const ingredients = formData.getAll('ingredients[]') as string[];
 
-    await updateRecipeRelations(supabase, recipeId, tags, 'tags', 'recipes_tags', 'tag_id');
+    if (!recipeId) {
+      return fail(400, { error: 'You must provide a recipe ID.' });
+    }
+
+    const { error: updateError } = await supabase
+      .from('recipes')
+      .update({ ingredients })
+      .eq('id', recipeId);
+
+    if (updateError) {
+      return fail(500, { error: updateError.message });
+    }
+  },
+  updateSteps: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const recipeId = formData.get('recipeId') as string;
+    const steps = formData.getAll('steps[]') as string[];
+
+    if (!recipeId) {
+      return fail(400, { error: 'You must provide a recipe ID.' });
+    }
+
+    const { error: updateError } = await supabase
+      .from('recipes')
+      .update({ steps })
+      .eq('id', recipeId);
+
+    if (updateError) {
+      return fail(500, { error: updateError.message });
+    }
   },
 };

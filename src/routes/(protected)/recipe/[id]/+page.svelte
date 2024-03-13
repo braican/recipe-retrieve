@@ -3,17 +3,21 @@
   import PencilIcon from '$lib/icons/pencil.svg?raw';
   import { enhance } from '$app/forms';
   import { BackgroundImage, Icon, PillList, StatefulSubmit } from '$lib/components';
+  import { IngredientList, StepsList } from '$lib/components/recipe';
   import { AutoInput } from '$lib/ui';
   import { authStore } from '$lib/stores';
   import type { Term } from '$userTypes';
-  import type { SubmitFunction } from './$types';
+  import type { SubmitFunction } from '@sveltejs/kit';
 
   export let data;
   const { session, supabase } = authStore;
 
   let loading = false;
-  let featuredIngredientList: Term[] = [];
-  let tagList: Term[] = [];
+  let dbIngredients: Term[] = [];
+  let dbTags: Term[] = [];
+  let featuredIngredients: Term[] =
+    data.recipe.terms?.filter(({ taxonomy }) => taxonomy === 'Ingredients') ?? [];
+  let tags: Term[] = data.recipe.terms?.filter(({ taxonomy }) => taxonomy === 'Tags') ?? [];
   let newFeaturedIngredients: Term[] = [];
   let newTags: Term[] = [];
 
@@ -21,15 +25,13 @@
 
   const engageEditMode = async () => {
     editMode = true;
+    newFeaturedIngredients = featuredIngredients;
+    newTags = tags;
 
-    newFeaturedIngredients = data.recipe.featuredIngredients || [];
-    newTags = data.recipe.tags || [];
-
-    if ($supabase && featuredIngredientList.length === 0) {
-      const dbIngredients = await $supabase.from('ingredients').select().returns<Term[]>();
-      const dbTags = await $supabase.from('tags').select().returns<Term[]>();
-      featuredIngredientList = dbIngredients?.data ?? [];
-      tagList = dbTags?.data ?? [];
+    if ($supabase && dbIngredients.length === 0 && dbTags.length === 0) {
+      const terms = await $supabase.from('terms').select().in('taxonomy', [1, 2]).returns<Term[]>();
+      dbIngredients = terms?.data?.filter(({ taxonomy }) => taxonomy === 1) ?? [];
+      dbTags = terms?.data?.filter(({ taxonomy }) => taxonomy === 2) ?? [];
     }
   };
 
@@ -38,8 +40,8 @@
     return async () => {
       editMode = false;
       loading = false;
-      data.recipe.featuredIngredients = newFeaturedIngredients;
-      data.recipe.tags = newTags;
+      featuredIngredients = newFeaturedIngredients;
+      tags = newTags;
     };
   };
 
@@ -50,7 +52,7 @@
   };
 </script>
 
-<article>
+<article class="recipe">
   {#if data.recipe.image_url}
     <BackgroundImage
       src={data.recipe.image_url}
@@ -85,8 +87,8 @@
           bind:selected={newFeaturedIngredients}
           name="featuredIngredients"
           label="Featured Ingredients"
-          options={featuredIngredientList} />
-        <AutoInput bind:selected={newTags} label="Tags" name="tags" options={tagList} />
+          options={dbIngredients} />
+        <AutoInput bind:selected={newTags} label="Tags" name="tags" options={dbTags} />
       </div>
 
       <input type="hidden" name="recipeId" value={data.recipe.id} />
@@ -98,14 +100,14 @@
     </form>
   {:else}
     <div class="form-columns mt-4">
-      {#if data.recipe.featuredIngredients && data.recipe.featuredIngredients.length > 0}
+      {#if featuredIngredients.length > 0}
         <div>
-          <PillList pills={data.recipe.featuredIngredients} title="Featured Ingredients" />
+          <PillList pills={featuredIngredients} title="Featured Ingredients" />
         </div>
       {/if}
-      {#if data.recipe.tags && data.recipe.tags.length > 0}
+      {#if tags.length > 0}
         <div>
-          <PillList pills={data.recipe.tags} title="Tags" />
+          <PillList pills={tags} title="Tags" />
         </div>
       {/if}
     </div>
@@ -113,46 +115,39 @@
 
   <div class="recipe-instructions">
     <section class="mt-4 ingredients">
-      <h2 class="mb-3 fw-bold">Ingredients</h2>
-
-      <ul class="unordered-list">
-        {#each data.recipe.ingredients as ingredient}
-          <li>{ingredient}</li>
-        {/each}
-      </ul>
+      <IngredientList ingredients={data.recipe.ingredients} recipe={data.recipe} />
     </section>
 
     <section class="mt-4 steps">
-      <h2 class="mb-3 fw-bold">Steps</h2>
-
-      <ol class="number-list">
-        {#each data.recipe.steps as step}
-          <li class="fs-1">{step}</li>
-        {/each}
-      </ol>
+      <StepsList steps={data.recipe.steps} recipe={data.recipe} />
     </section>
   </div>
 </article>
 
 <style>
+  .recipe {
+    padding-bottom: var(--sp-5);
+  }
+
   .header-with-image {
     margin-top: 5vh;
   }
 
-  .edit-recipe {
+  :global(.edit-recipe) {
     transition: color var(--transition);
     width: 40px;
     vertical-align: middle;
     padding: var(--sp-2);
   }
 
+  :global(.edit-recipe:hover) {
+    color: var(--c-primary-dark);
+  }
+
   .form-columns {
     gap: var(--sp-4);
   }
 
-  .edit-recipe:hover {
-    color: var(--c-primary-dark);
-  }
   .recipe-instructions {
     display: flex;
     flex-wrap: wrap;
@@ -161,6 +156,7 @@
 
   .ingredients {
     flex: 0 1 auto;
+    max-width: 312px;
   }
   .steps {
     flex: 1 1 60%;
