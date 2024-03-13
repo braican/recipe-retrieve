@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { dndzone } from 'svelte-dnd-action';
   import TrashIcon from '$lib/icons/trash.svg?raw';
+  import type { Item, TransformDraggedElementFunction } from 'svelte-dnd-action';
 
   let itemList: HTMLTextAreaElement[] | HTMLInputElement[] = [];
 
@@ -10,6 +12,7 @@
   export let addMore = '';
 
   export let values: string[] = [];
+  let mappedValues: Item[] = values.map((text, id) => ({ id, text }));
 
   const addValue = () => {
     values = [...values.filter(x => x), ''];
@@ -17,6 +20,18 @@
 
   const focusOnInput = (node: HTMLInputElement | HTMLTextAreaElement) => {
     node.focus();
+  };
+
+  const handleSort = (event: CustomEvent) => {
+    mappedValues = event.detail.items;
+    values = mappedValues.map(({ text }) => text);
+  };
+
+  const transformDraggedElement: TransformDraggedElementFunction = (
+    element: HTMLElement | undefined,
+    draggedElementData: Item | undefined,
+  ): void => {
+    if (element) element.innerHTML = draggedElementData?.text;
   };
 </script>
 
@@ -26,34 +41,38 @@
   {/if}
 
   {#if values.length > 0}
-    <ul class="mb-2">
-      {#each values as value, i}
-        <li class="mb-1 item">
+    <div
+      class="mb-2"
+      use:dndzone={{ items: mappedValues, dropTargetStyle: {}, transformDraggedElement }}
+      on:consider={handleSort}
+      on:finalize={handleSort}>
+      {#each mappedValues as value (value.id)}
+        <div class="mb-1 item input-item">
           <button
             type="button"
             class="remove"
-            on:click={() => (values = values.filter((x, j) => i !== j))}
+            on:click={() => (values = values.filter((x, j) => value.id !== j))}
             aria-label="Remove ingredient">
             {@html TrashIcon}
           </button>
           {#if type === 'textarea'}
             <textarea
               {name}
-              bind:value={values[i]}
               rows="2"
-              bind:this={itemList[i]}
+              bind:value={value.text}
+              bind:this={itemList[value.id]}
               use:focusOnInput></textarea>
           {:else}
             <input
               {name}
               type="text"
-              bind:value={values[i]}
-              bind:this={itemList[i]}
+              bind:value={value.text}
+              bind:this={itemList[value.id]}
               use:focusOnInput />
           {/if}
-        </li>
+        </div>
       {/each}
-    </ul>
+    </div>
   {/if}
 
   <div class="align-right">
@@ -65,6 +84,7 @@
 <style>
   .group {
     display: block;
+    position: relative;
   }
 
   .label {
@@ -87,6 +107,16 @@
   .item {
     display: flex;
     align-items: center;
+  }
+  .item:not(.ghost):before {
+    content: '';
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMTAyIDYwYTEwIDEwIDAgMSAxLTEwLTEwYTEwIDEwIDAgMCAxIDEwIDEwbTYyIDEwYTEwIDEwIDAgMSAwLTEwLTEwYTEwIDEwIDAgMCAwIDEwIDEwbS03MiA0OGExMCAxMCAwIDEgMCAxMCAxMGExMCAxMCAwIDAgMC0xMC0xMG03MiAwYTEwIDEwIDAgMSAwIDEwIDEwYTEwIDEwIDAgMCAwLTEwLTEwbS03MiA2OGExMCAxMCAwIDEgMCAxMCAxMGExMCAxMCAwIDAgMC0xMC0xMG03MiAwYTEwIDEwIDAgMSAwIDEwIDEwYTEwIDEwIDAgMCAwLTEwLTEwIi8+PC9zdmc+);
+    background-size: 20px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin-right: var(--sp-2);
+    cursor: grab;
   }
 
   .remove {
