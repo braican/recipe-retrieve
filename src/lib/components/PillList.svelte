@@ -47,6 +47,7 @@
     display: flex;
     align-items: center;
     gap: var(--sp-1);
+    border-radius: var(--border-radius);
   }
 
   .remove-selected :global(svg) {

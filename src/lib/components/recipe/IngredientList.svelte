@@ -1,7 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import PencilIcon from '$lib/icons/pencil.svg?raw';
-  import { Icon, StatefulSubmit } from '$lib/components';
+  import { StatefulSubmit, EditButton } from '$lib/components';
   import { MultiInput } from '$lib/ui';
   import type { Recipe } from '$userTypes';
   import type { SubmitFunction } from '@sveltejs/kit';
@@ -38,11 +37,7 @@
   Ingredients
 
   {#if !editMode}
-    <button
-      on:click={engageEditMode}
-      class="edit-recipe"
-      type="button"
-      aria-label={`Edit ${recipe.title} recipe`}><Icon icon={PencilIcon} /></button>
+    <EditButton label={`Edit ${recipe.title} ingredients`} on:triggerEdit={engageEditMode} />
   {/if}
 </h2>
 

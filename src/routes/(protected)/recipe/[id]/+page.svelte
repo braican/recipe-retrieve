@@ -1,16 +1,16 @@
 <script lang="ts">
-  import LeftArrowIcon from '$lib/icons/left-arrow.svg?raw';
-  import PencilIcon from '$lib/icons/pencil.svg?raw';
   import { enhance } from '$app/forms';
-  import { BackgroundImage, Icon, PillList, StatefulSubmit } from '$lib/components';
-  import { IngredientList, StepsList } from '$lib/components/recipe';
+  import { BackgroundImage, PillList, StatefulSubmit } from '$lib/components';
+  import { Header, IngredientList, StepsList } from '$lib/components/recipe';
   import { AutoInput } from '$lib/ui';
   import { authStore } from '$lib/stores';
+
+  const { supabase } = authStore;
+
   import type { Term } from '$userTypes';
   import type { SubmitFunction } from '@sveltejs/kit';
 
   export let data;
-  const { session, supabase } = authStore;
 
   let loading = false;
   let dbIngredients: Term[] = [];
@@ -61,24 +61,7 @@
       opacity="0.8" />
   {/if}
 
-  <header class="header" class:header-with-image={data.recipe.image_url}>
-    <a class="back-link mb-2" href="/kitchen" aria-label="Back to the kitchen"
-      >{@html LeftArrowIcon}</a>
-    <h1 class="fs-4 fw-bold title">
-      {data.recipe.title}
-
-      {#if !editMode && data.recipe.user_id === $session?.user.id}
-        <button
-          on:click={engageEditMode}
-          class="edit-recipe"
-          type="button"
-          aria-label={`Edit ${data.recipe.title} recipe`}><Icon icon={PencilIcon} /></button>
-      {/if}
-    </h1>
-    {#if data.recipe.source_url}
-      <a class="basic-link" href={data.recipe.source_url} target="_blank" rel="noopener">Source</a>
-    {/if}
-  </header>
+  <Header {editMode} on:triggerEdit={engageEditMode} />
 
   {#if editMode}
     <form action="?/updateTags" method="POST" class="mt-4" use:enhance={handleSaveNewTags}>
@@ -127,21 +110,6 @@
 <style>
   .recipe {
     padding-bottom: var(--sp-5);
-  }
-
-  .header-with-image {
-    margin-top: 5vh;
-  }
-
-  :global(.edit-recipe) {
-    transition: color var(--transition);
-    width: 40px;
-    vertical-align: middle;
-    padding: var(--sp-2);
-  }
-
-  :global(.edit-recipe:hover) {
-    color: var(--c-primary-dark);
   }
 
   .form-columns {
