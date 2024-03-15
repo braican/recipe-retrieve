@@ -148,18 +148,19 @@
     gap: var(--sp-4);
   }
 
-  .recipe-instructions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-4);
-  }
-
-  .ingredients {
-    flex: 0 1 auto;
-    max-width: 312px;
-  }
-  .steps {
-    flex: 1 1 60%;
-    max-width: 768px;
+  @media (min-width: 640px) {
+    .recipe-instructions {
+      display: flex;
+      gap: var(--sp-4);
+    }
+    .ingredients {
+      flex: 1 0 30%;
+      max-width: 360px;
+      min-width: 260px;
+    }
+    .steps {
+      flex: 1 1 60%;
+      max-width: 768px;
+    }
   }
 </style>
