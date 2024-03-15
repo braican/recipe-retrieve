@@ -7,9 +7,7 @@
   export let editMode = false;
 
   const { session } = authStore;
-  const {
-    data: { recipe },
-  } = $page;
+  const { recipe } = $page.data;
 </script>
 
 <header class="header" class:header-with-image={recipe.image_url}>
@@ -19,7 +17,7 @@
     {recipe.title}
 
     {#if !editMode && recipe.user_id === $session?.user.id}
-      <EditButton label={`Edit ${recipe.title} recipe`} on:triggerEdit />
+      <EditButton label={`Edit ${recipe.title} recipe`} on:engageEditMode />
     {/if}
   </h1>
   {#if recipe.source_url}

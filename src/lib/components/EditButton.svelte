@@ -9,7 +9,7 @@
 </script>
 
 <button
-  on:click={() => dispatch('triggerEdit')}
+  on:click={() => dispatch('engageEditMode')}
   class="edit-button"
   type="button"
   aria-label={label}>

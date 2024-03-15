@@ -1,54 +1,24 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { BackgroundImage, PillList, StatefulSubmit } from '$lib/components';
-  import { Header, IngredientList, StepsList } from '$lib/components/recipe';
-  import { AutoInput } from '$lib/ui';
+  import { BackgroundImage } from '$lib/components';
+  import { Header, IngredientList, StepsList, TagControls } from '$lib/components/recipe';
   import { authStore } from '$lib/stores';
+  import type { Term } from '$userTypes';
 
   const { supabase } = authStore;
-
-  import type { Term } from '$userTypes';
-  import type { SubmitFunction } from '@sveltejs/kit';
-
   export let data;
 
-  let loading = false;
   let dbIngredients: Term[] = [];
   let dbTags: Term[] = [];
-  let featuredIngredients: Term[] =
-    data.recipe.terms?.filter(({ taxonomy }) => taxonomy === 'Ingredients') ?? [];
-  let tags: Term[] = data.recipe.terms?.filter(({ taxonomy }) => taxonomy === 'Tags') ?? [];
-  let newFeaturedIngredients: Term[] = [];
-  let newTags: Term[] = [];
-
   let editMode = false;
 
   const engageEditMode = async () => {
     editMode = true;
-    newFeaturedIngredients = featuredIngredients;
-    newTags = tags;
 
     if ($supabase && dbIngredients.length === 0 && dbTags.length === 0) {
       const terms = await $supabase.from('terms').select().in('taxonomy', [1, 2]).returns<Term[]>();
       dbIngredients = terms?.data?.filter(({ taxonomy }) => taxonomy === 1) ?? [];
       dbTags = terms?.data?.filter(({ taxonomy }) => taxonomy === 2) ?? [];
     }
-  };
-
-  const handleSaveNewTags: SubmitFunction = () => {
-    loading = true;
-    return async () => {
-      editMode = false;
-      loading = false;
-      featuredIngredients = newFeaturedIngredients;
-      tags = newTags;
-    };
-  };
-
-  const cancelEditMode = () => {
-    editMode = false;
-    newTags = [];
-    newFeaturedIngredients = [];
   };
 </script>
 
@@ -61,40 +31,9 @@
       opacity="0.8" />
   {/if}
 
-  <Header {editMode} on:triggerEdit={engageEditMode} />
+  <Header {editMode} on:engageEditMode={engageEditMode} />
 
-  {#if editMode}
-    <form action="?/updateTags" method="POST" class="mt-4" use:enhance={handleSaveNewTags}>
-      <div class="form-columns">
-        <AutoInput
-          bind:selected={newFeaturedIngredients}
-          name="featuredIngredients"
-          label="Featured Ingredients"
-          options={dbIngredients} />
-        <AutoInput bind:selected={newTags} label="Tags" name="tags" options={dbTags} />
-      </div>
-
-      <input type="hidden" name="recipeId" value={data.recipe.id} />
-
-      <div>
-        <StatefulSubmit buttonText="Update" {loading} />&nbsp;&nbsp;
-        <button type="button" class="basic-link" on:click={cancelEditMode}>Cancel</button>
-      </div>
-    </form>
-  {:else}
-    <div class="form-columns mt-4">
-      {#if featuredIngredients.length > 0}
-        <div>
-          <PillList pills={featuredIngredients} title="Featured Ingredients" />
-        </div>
-      {/if}
-      {#if tags.length > 0}
-        <div>
-          <PillList pills={tags} title="Tags" />
-        </div>
-      {/if}
-    </div>
-  {/if}
+  <TagControls {editMode} {dbIngredients} {dbTags} on:cancelEdit={() => (editMode = false)} />
 
   <div class="recipe-instructions">
     <section class="mt-4 ingredients">
@@ -110,10 +49,6 @@
 <style>
   .recipe {
     padding-bottom: var(--sp-5);
-  }
-
-  .form-columns {
-    gap: var(--sp-4);
   }
 
   @media (min-width: 640px) {
