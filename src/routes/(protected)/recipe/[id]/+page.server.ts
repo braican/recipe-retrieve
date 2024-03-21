@@ -24,6 +24,7 @@ export const actions = {
     const recipeId = formData.get('recipeId') as string;
     const featuredIngredients = formData.getAll('featuredIngredients[]') as string[];
     const tags = formData.getAll('tags[]') as string[];
+    const cuisines = formData.getAll('cuisines[]') as string[];
 
     if (!recipeId) {
       return fail(400, { error: 'You must provide a recipe ID.' });
@@ -32,6 +33,7 @@ export const actions = {
     await updateRecipeRelations(supabase, recipeId, [
       ...featuredIngredients.map(term => ({ taxonomy: 1, term })),
       ...tags.map(term => ({ taxonomy: 2, term })),
+      ...cuisines.map(term => ({ taxonomy: 3, term })),
     ]);
   },
   updateIngredients: async ({ request, locals: { supabase } }) => {

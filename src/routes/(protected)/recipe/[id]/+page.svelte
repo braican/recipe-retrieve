@@ -1,25 +1,9 @@
 <script lang="ts">
-  import { authStore } from '$lib/stores';
   import { BackgroundImage } from '$lib/components';
   import { Header, IngredientList, StepsList, TagControls } from '$lib/components/recipe';
-  import type { Term, Recipe } from '$userTypes';
-
-  const { supabase } = authStore;
 
   export let data;
   let editMode = false;
-  let dbIngredients: Term[] = [];
-  let dbTags: Term[] = [];
-
-  const engageEditMode = async () => {
-    editMode = true;
-
-    if ($supabase && dbIngredients.length === 0 && dbTags.length === 0) {
-      const terms = await $supabase.from('terms').select().in('taxonomy', [1, 2]).returns<Term[]>();
-      dbIngredients = terms?.data?.filter(({ taxonomy }) => taxonomy === 1) ?? [];
-      dbTags = terms?.data?.filter(({ taxonomy }) => taxonomy === 2) ?? [];
-    }
-  };
 </script>
 
 <article class="recipe">
@@ -31,9 +15,9 @@
       opacity="0.8" />
   {/if}
 
-  <Header {editMode} on:engageEditMode={engageEditMode} />
+  <Header {editMode} on:engageEditMode={() => (editMode = true)} />
 
-  <TagControls {editMode} {dbIngredients} {dbTags} on:cancelEdit={() => (editMode = false)} />
+  <TagControls {editMode} on:cancelEdit={() => (editMode = false)} />
 
   <div class="recipe-instructions">
     <section class="mt-4 ingredients">
