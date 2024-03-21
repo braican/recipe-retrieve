@@ -6,7 +6,7 @@ import type { Recipe } from '$userTypes';
 export const load = async ({ params, locals: { supabase } }) => {
   const { data: recipe } = await supabase
     .from('recipes')
-    .select('*, terms(id, title, ...taxonomies(taxonomy:title))')
+    .select('*, terms(id, title, ...taxonomies(taxonomy:id))')
     .eq('id', params.id)
     .returns<Recipe>()
     .single();

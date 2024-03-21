@@ -1,26 +1,26 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { enhance } from '$app/forms';
-  import { PillList, StatefulSubmit } from '$lib/components';
   import { page } from '$app/stores';
+  import { PillList, StatefulSubmit } from '$lib/components';
   import { AutoInput } from '$lib/ui';
   import type { SubmitFunction } from '@sveltejs/kit';
-  import type { Term, Recipe } from '$userTypes';
+  import type { Term } from '$userTypes';
 
   const dispatch = createEventDispatcher();
-  const { recipe } = $page.data;
+  const {
+    recipe: { id, terms },
+  } = $page.data;
 
   export let editMode = false;
   export let dbIngredients: Term[] = [];
   export let dbTags: Term[] = [];
-  export let ingredients: Term[] =
-    (recipe as Recipe).terms?.filter(({ taxonomy }) => taxonomy === 'Ingredients') ?? [];
-  export let tags: Term[] =
-    (recipe as Recipe).terms?.filter(({ taxonomy }) => taxonomy === 'Tags') ?? [];
 
+  let ingredients = (terms as Term[])?.filter(({ taxonomy }) => taxonomy === 1) ?? [];
+  let tags = (terms as Term[])?.filter(({ taxonomy }) => taxonomy === 2) ?? [];
   let loading = false;
-  let newIngredients: Term[] = [...ingredients];
-  let newTags: Term[] = [...tags];
+  let localIngredients: Term[] = [...ingredients];
+  let localTags: Term[] = [...tags];
 
   const handleSaveNewTags: SubmitFunction = () => {
     loading = true;
@@ -28,15 +28,16 @@
     return async () => {
       editMode = false;
       loading = false;
-      ingredients = newIngredients;
-      tags = newTags;
+      ingredients = [...localIngredients];
+      tags = [...localTags];
+      dispatch('cancelEdit');
     };
   };
 
   const cancelEditMode = () => {
     dispatch('cancelEdit');
-    newIngredients = [...newIngredients];
-    newTags = [...tags];
+    localIngredients = [...ingredients];
+    localTags = [...tags];
   };
 </script>
 
@@ -44,14 +45,14 @@
   <form action="?/updateTags" method="POST" class="mt-4" use:enhance={handleSaveNewTags}>
     <div class="form-columns">
       <AutoInput
-        bind:selected={newIngredients}
-        name="featuredIngredients"
+        bind:selected={localIngredients}
         label="Featured Ingredients"
+        name="featuredIngredients"
         options={dbIngredients} />
-      <AutoInput bind:selected={newTags} label="Tags" name="tags" options={dbTags} />
+      <AutoInput bind:selected={localTags} label="Tags" name="tags" options={dbTags} />
     </div>
 
-    <input type="hidden" name="recipeId" value={recipe.id} />
+    <input type="hidden" name="recipeId" value={id} />
 
     <div>
       <StatefulSubmit buttonText="Update" {loading} />&nbsp;&nbsp;
@@ -60,14 +61,14 @@
   </form>
 {:else}
   <div class="form-columns mt-4">
-    {#if ingredients.length > 0}
+    {#if localIngredients.length > 0}
       <div>
-        <PillList pills={ingredients} title="Featured Ingredients" />
+        <PillList pills={localIngredients} title="Featured Ingredients" />
       </div>
     {/if}
-    {#if tags.length > 0}
+    {#if localTags.length > 0}
       <div>
-        <PillList pills={tags} title="Tags" />
+        <PillList pills={localTags} title="Tags" />
       </div>
     {/if}
   </div>

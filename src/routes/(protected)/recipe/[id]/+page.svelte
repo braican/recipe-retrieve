@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { authStore } from '$lib/stores';
   import { BackgroundImage } from '$lib/components';
   import { Header, IngredientList, StepsList, TagControls } from '$lib/components/recipe';
-  import { authStore } from '$lib/stores';
-  import type { Term } from '$userTypes';
+  import type { Term, Recipe } from '$userTypes';
 
   const { supabase } = authStore;
-  export let data;
 
+  export let data;
+  let editMode = false;
   let dbIngredients: Term[] = [];
   let dbTags: Term[] = [];
-  let editMode = false;
 
   const engageEditMode = async () => {
     editMode = true;
