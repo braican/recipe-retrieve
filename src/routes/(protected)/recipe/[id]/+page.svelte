@@ -1,6 +1,12 @@
 <script lang="ts">
   import { BackgroundImage } from '$lib/components';
-  import { Header, IngredientList, StepsList, TagControls } from '$lib/components/recipe';
+  import {
+    Header,
+    IngredientList,
+    StepsList,
+    FlagControls,
+    TagControls,
+  } from '$lib/components/recipe';
 
   export let data;
   let editMode = false;
@@ -16,6 +22,8 @@
   {/if}
 
   <Header {editMode} on:engageEditMode={() => (editMode = true)} />
+
+  <FlagControls />
 
   <TagControls {editMode} on:cancelEdit={() => (editMode = false)} />
 

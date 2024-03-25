@@ -105,13 +105,13 @@
 
 <style>
   .form-columns {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: var(--sp-3) var(--sp-4);
   }
 
   @media (max-width: 512px) {
     .form-columns {
-      grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
     }
   }
 </style>
