@@ -23,6 +23,7 @@
   --c-gray-dark: #999;
   --c-light-text: var(--c-bg);
   --c-alert-red: #ff0000;
+  --c-black: #333;
 
   /* Type */
   --font-base: 'Manrope', sans-serif;
