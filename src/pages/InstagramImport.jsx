@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router'
 import pb from '../lib/pocketbase'
 import { useAuth } from '../lib/auth'
 import { parseInstagramRecipe } from '../lib/parseRecipe'

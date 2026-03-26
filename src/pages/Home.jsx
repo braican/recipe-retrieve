@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import pb from '../lib/pocketbase'
 import { useAuth } from '../lib/auth'
 import RecipeCard from '../components/RecipeCard'
