@@ -8,8 +8,11 @@ import styles from './Home.module.css'
 export default function Home() {
   const { user } = useAuth()
   const [recipes, setRecipes] = useState([])
+  const [cookedIds, setCookedIds] = useState(new Set())
+  const [menuIds, setMenuIds] = useState(new Set())
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [hideCooked, setHideCooked] = useState(false)
 
   useEffect(() => {
     fetchRecipes()
@@ -18,12 +21,24 @@ export default function Home() {
   async function fetchRecipes() {
     setLoading(true)
     try {
-      const result = await pb.collection('recipes').getFullList({
-        filter: `owner = "${user.id}"`,
-        sort: '-created',
-        requestKey: null,
-      })
+      const [result, cooked, menu] = await Promise.all([
+        pb.collection('recipes').getFullList({
+          filter: `owner = "${user.id}"`,
+          sort: '-created',
+          requestKey: null,
+        }),
+        pb.collection('cooked_recipes').getFullList({
+          filter: `user = "${user.id}"`,
+          requestKey: null,
+        }),
+        pb.collection('weekly_menu').getFullList({
+          filter: `user = "${user.id}"`,
+          requestKey: null,
+        }),
+      ])
       setRecipes(result)
+      setCookedIds(new Set(cooked.map((c) => c.recipe)))
+      setMenuIds(new Set(menu.map((m) => m.recipe)))
     } catch (err) {
       console.error('Failed to fetch recipes', err)
     } finally {
@@ -31,11 +46,12 @@ export default function Home() {
     }
   }
 
-  const filtered = recipes.filter((r) =>
-    !search ||
-    r.title.toLowerCase().includes(search.toLowerCase()) ||
-    r.tags?.some((t) => t.toLowerCase().includes(search.toLowerCase()))
-  )
+  const filtered = recipes.filter((r) => {
+    if (hideCooked && cookedIds.has(r.id)) return false
+    return !search ||
+      r.title.toLowerCase().includes(search.toLowerCase()) ||
+      r.tags?.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+  })
 
   return (
     <div className={styles.page}>
@@ -61,6 +77,12 @@ export default function Home() {
           onChange={(e) => setSearch(e.target.value)}
           className={styles.search}
         />
+        <button
+          className={`${styles.filterBtn} ${hideCooked ? styles.active : ''}`}
+          onClick={() => setHideCooked((v) => !v)}
+        >
+          Hide cooked
+        </button>
       </div>
 
       {loading ? (
@@ -90,7 +112,7 @@ export default function Home() {
       ) : (
         <div className={styles.grid}>
           {filtered.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
+            <RecipeCard key={recipe.id} recipe={recipe} cooked={cookedIds.has(recipe.id)} onMenu={menuIds.has(recipe.id)} />
           ))}
         </div>
       )}

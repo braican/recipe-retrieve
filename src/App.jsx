@@ -9,6 +9,7 @@ import RecipeDetail from './pages/RecipeDetail'
 import AddRecipe from './pages/AddRecipe'
 import InstagramImport from './pages/InstagramImport'
 import ShareTarget from './pages/ShareTarget'
+import WeeklyMenu from './pages/WeeklyMenu'
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Nav />}>
               <Route path="/" element={<Home />} />
+              <Route path="/menu" element={<WeeklyMenu />} />
               <Route path="/recipe/:id" element={<RecipeDetail />} />
               <Route path="/add" element={<AddRecipe />} />
               <Route path="/add/instagram" element={<InstagramImport />} />

@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import styles from './RecipeCard.module.css'
 
-export default function RecipeCard({ recipe }) {
+export default function RecipeCard({ recipe, cooked, onMenu }) {
   const imageUrl = recipe.image
     ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/recipes/${recipe.id}/${recipe.image}`
     : null
@@ -19,6 +19,8 @@ export default function RecipeCard({ recipe }) {
         {recipe.source_type === 'instagram' && (
           <span className={styles.badge}>IG</span>
         )}
+        {cooked && <span className={styles.cookedBadge}>✓ Cooked</span>}
+        {onMenu && <span className={styles.menuBadge}>This week</span>}
       </div>
       <div className={styles.body}>
         <h3 className={styles.title}>{recipe.title}</h3>

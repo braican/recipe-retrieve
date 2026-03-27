@@ -12,6 +12,10 @@ export default function RecipeDetail() {
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [cookedRecordId, setCookedRecordId] = useState(null)
+  const [togglingCooked, setTogglingCooked] = useState(false)
+  const [menuRecordId, setMenuRecordId] = useState(null)
+  const [togglingMenu, setTogglingMenu] = useState(false)
 
   useEffect(() => {
     fetchRecipe()
@@ -19,12 +23,58 @@ export default function RecipeDetail() {
 
   async function fetchRecipe() {
     try {
-      const result = await pb.collection('recipes').getOne(id, { requestKey: null })
+      const [result, cooked, menu] = await Promise.all([
+        pb.collection('recipes').getOne(id, { requestKey: null }),
+        pb.collection('cooked_recipes').getFirstListItem(
+          `user = "${user.id}" && recipe = "${id}"`,
+          { requestKey: null }
+        ).catch(() => null),
+        pb.collection('weekly_menu').getFirstListItem(
+          `user = "${user.id}" && recipe = "${id}"`,
+          { requestKey: null }
+        ).catch(() => null),
+      ])
       setRecipe(result)
+      setCookedRecordId(cooked?.id ?? null)
+      setMenuRecordId(menu?.id ?? null)
     } catch {
       navigate('/', { replace: true })
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function toggleCooked() {
+    setTogglingCooked(true)
+    try {
+      if (cookedRecordId) {
+        await pb.collection('cooked_recipes').delete(cookedRecordId)
+        setCookedRecordId(null)
+      } else {
+        const record = await pb.collection('cooked_recipes').create({ user: user.id, recipe: id })
+        setCookedRecordId(record.id)
+      }
+    } catch (err) {
+      console.error('Failed to toggle cooked', err)
+    } finally {
+      setTogglingCooked(false)
+    }
+  }
+
+  async function toggleMenu() {
+    setTogglingMenu(true)
+    try {
+      if (menuRecordId) {
+        await pb.collection('weekly_menu').delete(menuRecordId)
+        setMenuRecordId(null)
+      } else {
+        const record = await pb.collection('weekly_menu').create({ user: user.id, recipe: id })
+        setMenuRecordId(record.id)
+      }
+    } catch (err) {
+      console.error('Failed to toggle menu', err)
+    } finally {
+      setTogglingMenu(false)
     }
   }
 
@@ -53,15 +103,31 @@ export default function RecipeDetail() {
     <div className={styles.page}>
       <div className={styles.topBar}>
         <Link to="/" className={styles.back}>← Collection</Link>
-        {isOwner && (
+        <div className={styles.topBarActions}>
           <button
-            className={`${styles.deleteBtn} ${confirmDelete ? styles.confirm : ''}`}
-            onClick={handleDelete}
-            disabled={deleting}
+            className={`${styles.menuBtn} ${menuRecordId ? styles.onMenu : ''}`}
+            onClick={toggleMenu}
+            disabled={togglingMenu}
           >
-            {deleting ? 'Deleting…' : confirmDelete ? 'Confirm delete' : 'Delete'}
+            {menuRecordId ? '✓ On this week\'s menu' : 'Add to this week\'s menu'}
           </button>
-        )}
+          <button
+            className={`${styles.cookedBtn} ${cookedRecordId ? styles.cooked : ''}`}
+            onClick={toggleCooked}
+            disabled={togglingCooked}
+          >
+            {cookedRecordId ? '✓ Cooked' : 'Mark as cooked'}
+          </button>
+          {isOwner && (
+            <button
+              className={`${styles.deleteBtn} ${confirmDelete ? styles.confirm : ''}`}
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? 'Deleting…' : confirmDelete ? 'Confirm delete' : 'Delete'}
+            </button>
+          )}
+        </div>
       </div>
 
       {imageUrl && (
