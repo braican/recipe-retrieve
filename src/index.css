@@ -5,22 +5,22 @@
 }
 
 :root {
-  /* Colors — warm dark editorial */
-  --bg:          #100e09;
-  --bg-card:     #1c1810;
-  --bg-elevated: #252018;
-  --border:      #2e2818;
-  --border-light:#3d3520;
+  /* Colors — warm light cookbook */
+  --bg:          #faf7f2;
+  --bg-card:     #ffffff;
+  --bg-elevated: #f2ede4;
+  --border:      #e2d9cc;
+  --border-light:#cec5b8;
 
-  --text:        #f0e8d8;
-  --text-muted:  #8a7f6a;
-  --text-dim:    #5a5245;
+  --text:        #2a2118;
+  --text-muted:  #6b5f50;
+  --text-dim:    #a09282;
 
   --accent:      #c8933a;
-  --accent-light:#e0ac58;
-  --accent-dim:  #7a5820;
+  --accent-light:#b07828;
+  --accent-dim:  #e8d4b0;
 
-  --success:     #4a8c5c;
+  --success:     #3d7a52;
   --error:       #a04040;
 
   /* Type */
@@ -29,7 +29,6 @@
 
   /* Spacing */
   --nav-h: 60px;
-  --max-w: 900px;
   --gap:   1.5rem;
 
   /* Radius */
@@ -66,8 +65,8 @@ button {
 
 input, textarea, select {
   font-family: var(--font-body);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   color: var(--text);
   border-radius: var(--r-sm);
   padding: 0.65rem 0.85rem;
@@ -78,7 +77,7 @@ input, textarea, select {
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: var(--accent-dim);
+  border-color: var(--accent);
 }
 
 input::placeholder, textarea::placeholder {

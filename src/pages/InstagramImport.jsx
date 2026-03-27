@@ -48,6 +48,12 @@ export default function InstagramImport() {
       if (!Array.isArray(result.steps)) result.steps = []
       // Flatten tags for RecipeForm (expects comma string)
       if (Array.isArray(result.tags)) result.tags = result.tags.join(', ')
+      const isEmpty = !result.title && !result.ingredients?.length && !result.steps?.length
+      if (isEmpty) {
+        setError('Claude couldn\'t extract a recipe — Instagram blocks direct access to posts. Paste the post caption into the field below and try again.')
+        setStep(STEP_INPUT)
+        return
+      }
       setParsed(result)
       setStep(STEP_REVIEW)
     } catch (err) {

@@ -18,12 +18,6 @@ export default function Nav() {
 
         <nav className={styles.nav}>
           <Link
-            to="/"
-            className={`${styles.navLink} ${isActive('/') ? styles.active : ''}`}
-          >
-            Collection
-          </Link>
-          <Link
             to="/add"
             className={`${styles.navLink} ${isActive('/add') ? styles.active : ''}`}
           >

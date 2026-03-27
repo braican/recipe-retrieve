@@ -15,7 +15,10 @@ const EMPTY = {
 }
 
 export default function RecipeForm({ initial = {}, onSubmit, submitting }) {
-  const [form, setForm] = useState({ ...EMPTY, ...initial })
+  const merged = { ...EMPTY, ...initial }
+  const [form, setForm] = useState(
+    Object.fromEntries(Object.entries(merged).map(([k, v]) => [k, v ?? EMPTY[k]]))
+  )
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }))

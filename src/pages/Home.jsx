@@ -10,7 +10,6 @@ export default function Home() {
   const [recipes, setRecipes] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     fetchRecipes()
@@ -22,6 +21,7 @@ export default function Home() {
       const result = await pb.collection('recipes').getFullList({
         filter: `owner = "${user.id}"`,
         sort: '-created',
+        requestKey: null,
       })
       setRecipes(result)
     } catch (err) {
@@ -31,28 +31,22 @@ export default function Home() {
     }
   }
 
-  const filtered = recipes.filter((r) => {
-    const matchesSearch =
-      !search ||
-      r.title.toLowerCase().includes(search.toLowerCase()) ||
-      r.tags?.some((t) => t.toLowerCase().includes(search.toLowerCase()))
-
-    const matchesFilter =
-      filter === 'all' ||
-      (filter === 'instagram' && r.source_type === 'instagram') ||
-      (filter === 'manual' && r.source_type === 'manual')
-
-    return matchesSearch && matchesFilter
-  })
+  const filtered = recipes.filter((r) =>
+    !search ||
+    r.title.toLowerCase().includes(search.toLowerCase()) ||
+    r.tags?.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+  )
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Your Collection</h1>
-          <p className={styles.count}>
-            {recipes.length} {recipes.length === 1 ? 'recipe' : 'recipes'}
-          </p>
+          {!loading && (
+            <p className={styles.count}>
+              {recipes.length} {recipes.length === 1 ? 'recipe' : 'recipes'}
+            </p>
+          )}
         </div>
         <Link to="/add" className={styles.addBtn}>
           + Add Recipe
@@ -67,17 +61,6 @@ export default function Home() {
           onChange={(e) => setSearch(e.target.value)}
           className={styles.search}
         />
-        <div className={styles.filters}>
-          {['all', 'instagram', 'manual'].map((f) => (
-            <button
-              key={f}
-              className={`${styles.filterBtn} ${filter === f ? styles.active : ''}`}
-              onClick={() => setFilter(f)}
-            >
-              {f === 'all' ? 'All' : f === 'instagram' ? 'Instagram' : 'Manual'}
-            </button>
-          ))}
-        </div>
       </div>
 
       {loading ? (

@@ -104,7 +104,7 @@
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200, 147, 58, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(200, 147, 58, 0.08) 0%, transparent 70%);
   left: calc(var(--i) * 8% - 10%);
   top: calc(var(--i) * 9% - 20%);
   animation: drift calc(8s + var(--i) * 1.3s) ease-in-out infinite alternate;

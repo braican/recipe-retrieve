@@ -5,7 +5,7 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(pb.authStore.model)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const handleAuthChange = () => setUser(pb.authStore.model)
@@ -16,7 +16,11 @@ export function AuthProvider({ children }) {
   // Refresh auth on mount if we have a stored token
   useEffect(() => {
     if (pb.authStore.isValid) {
-      pb.collection('users').authRefresh().catch(() => pb.authStore.clear())
+      pb.collection('users').authRefresh({ requestKey: null })
+        .catch(() => pb.authStore.clear())
+        .finally(() => setLoading(false))
+    } else {
+      setLoading(false)
     }
   }, [])
 

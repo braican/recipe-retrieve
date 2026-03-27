@@ -58,7 +58,7 @@
   gap: 0.6rem;
   align-self: flex-start;
   background: var(--accent);
-  color: #100e09;
+  color: #fff;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 0.75rem 1.5rem;
@@ -76,8 +76,8 @@
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(16, 14, 9, 0.3);
-  border-top-color: #100e09;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   display: inline-block;
@@ -96,9 +96,9 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #6db88a;
-  background: rgba(74, 140, 92, 0.1);
-  border: 1px solid rgba(74, 140, 92, 0.25);
+  color: var(--success);
+  background: rgba(61, 122, 82, 0.08);
+  border: 1px solid rgba(61, 122, 82, 0.2);
   padding: 0.6rem 0.9rem;
   border-radius: var(--r-sm);
 }

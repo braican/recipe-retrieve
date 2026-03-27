@@ -19,7 +19,7 @@ export default function RecipeDetail() {
 
   async function fetchRecipe() {
     try {
-      const result = await pb.collection('recipes').getOne(id)
+      const result = await pb.collection('recipes').getOne(id, { requestKey: null })
       setRecipe(result)
     } catch {
       navigate('/', { replace: true })
