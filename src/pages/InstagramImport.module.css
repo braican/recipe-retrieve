@@ -1,0 +1,113 @@
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.back {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: color 0.15s;
+  align-self: flex-start;
+}
+
+.back:hover { color: var(--text); }
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.inputForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.parseBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  align-self: flex-start;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--r-sm);
+  transition: background 0.15s;
+}
+
+.parseBtn:hover:not(:disabled) { background: var(--accent-light); }
+
+.parseBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.reviewBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--success);
+  background: rgba(61, 122, 82, 0.08);
+  border: 1px solid rgba(61, 122, 82, 0.2);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--r-sm);
+}
+
+.error {
+  background: rgba(160, 64, 64, 0.12);
+  border: 1px solid var(--error);
+  color: #e08080;
+  padding: 0.7rem 1rem;
+  border-radius: var(--r-sm);
+  font-size: 0.875rem;
+}
