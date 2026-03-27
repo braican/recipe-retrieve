@@ -64,9 +64,6 @@ export default function Home() {
             </p>
           )}
         </div>
-        <Link to="/add" className={styles.addBtn}>
-          + Add Recipe
-        </Link>
       </div>
 
       <div className={styles.toolbar}>
