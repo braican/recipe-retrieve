@@ -27,14 +27,17 @@
 
 .topBar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .topBarActions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .menuBtn {
@@ -136,9 +139,8 @@
 
 .titleRow {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .title {
@@ -150,10 +152,8 @@
 }
 
 .sourceLink {
-  flex-shrink: 0;
   font-size: 0.8rem;
   color: var(--accent);
-  margin-top: 0.4rem;
   transition: color 0.15s;
 }
 

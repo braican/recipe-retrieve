@@ -12,8 +12,8 @@ export default defineConfig({
         name: 'Recipe Retrieve',
         short_name: 'Recipes',
         description: 'Save and organize recipes from anywhere',
-        theme_color: '#1a1208',
-        background_color: '#1a1208',
+        theme_color: '#faf7f2',
+        background_color: '#faf7f2',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
@@ -39,6 +39,7 @@ export default defineConfig({
         share_target: {
           action: '/share-target',
           method: 'GET',
+          enctype: 'application/x-www-form-urlencoded',
           params: {
             title: 'title',
             text: 'text',
